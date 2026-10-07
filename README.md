@@ -2,7 +2,22 @@
 
 A standalone Windows app that loops YouTube videos and keeps a lifetime listen
 count. **Needs no server**: the page, the counts and the search all live in the
-app on this PC.
+app on this PC. **[Download the latest release](https://github.com/betemonkey/repeat-desktop/releases/latest)**.
+
+![The full window: a video on a loop, its lifetime count, the all-videos total, loop modes and Recent](docs/screenshots/full.png)
+
+<p>
+  <img src="docs/screenshots/mini.png" width="300" alt="The mini window: frameless and always on top, with the video, play/pause, music bars and counts">
+  &nbsp;
+  <img src="docs/screenshots/mini-folded.png" width="300" alt="The mini window folded: the video hidden, the music bars and counts still showing">
+</p>
+
+*The mini window floats over everything. Fold it to keep just the title, the
+music bars (they follow the actual sound) and your counts.*
+
+![A playlist: play, shuffle, drag to reorder, each song with its own loop count](docs/screenshots/playlist.png)
+
+*Screenshots use the Blender Foundation's open movies.*
 
 It started as a `/repeat` page on the monkey-status NAS dashboard (designs in the
 monkeynas repo, `ui-mockups/youtube-repeat*.html`). It became an app because a
