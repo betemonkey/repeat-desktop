@@ -53,7 +53,14 @@ scroll bar, with the page edges fading and a "more ↓" chip where there's more
 heading and every number in the icon's orange; C1, the bars above, with
 play/pause spanning the song name and description.
 
-## Run
+## Install
+
+Download the zip from the [latest release](https://github.com/betemonkey/repeat-desktop/releases/latest),
+unzip it anywhere and run `OnRepeat\RepeatDesktop.exe`. .NET is built in; Microsoft
+WebView2 comes with Windows 11. The .exe isn't signed, so the first run shows
+"Windows protected your PC": choose **More info → Run anyway**.
+
+## Run from source
 
 ```
 dotnet build -c Release
