@@ -1,0 +1,223 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Look Options</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  /* On repeat, look options, 2026-10-07. Monkey asked: alternatives to the scroll
+     bar, orange text instead of white in dark mode, and a music wave in the mini
+     window "like the Spotify one on the Stream Deck". Static mockup: the waves
+     animate, nothing plays. Pick one per section. */
+  :root{color-scheme:dark;--bg:#1E1D1B;--card:#262523;--line:#353331;--ink:#ECEAE5;--ink2:#C4C1BA;--mut:#8E8B85;--well:#2E2C29;--y:#3A3220;--yt:#E6C474;--g:#253226;--gt:#9CC79F;--or:#E5704B;--or2:#C9875F;--or3:#9C6E52}
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 16px 64px;background:#151413;color:var(--ink);font:14px/1.55 "Helvetica Neue",-apple-system,"Segoe UI",sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:26px}
+  h1{font:500 30px/1.1 Newsreader,Georgia,serif;letter-spacing:-.03em;margin:0}
+  h2{font:500 22px/1.2 Newsreader,Georgia,serif;margin:0}
+  .lead,.note{color:var(--ink2);margin:0;max-width:860px}
+  .note{font-size:13px}
+  .k{font:11px "Geist Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+  section{display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--line);padding-top:22px}
+  .row{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+  .opt{display:flex;flex-direction:column;gap:8px;flex:1;min-width:300px}
+  .opt h3{margin:0;font-size:14.5px}
+  .opt p{margin:0;color:var(--ink2);font-size:12.5px}
+  .tag{font:10px "Geist Mono",ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:1px 7px;background:var(--g);color:var(--gt);margin-left:6px;vertical-align:2px}
+
+  /* ---------- A: scroll bar ---------- */
+  .scr{position:relative;height:300px;border:1px solid var(--line);border-radius:10px;background:var(--bg);overflow:hidden}
+  .scr .inner{height:100%;overflow-y:auto;padding:12px 14px}
+  .scr .blk{background:var(--card);border:1px solid var(--line);border-radius:8px;margin-bottom:10px}
+  .scr .vid{height:110px;background:#0f0e0d}
+  .scr .ln{height:9px;border-radius:3px;background:var(--well);margin:8px 10px}
+  .scr .ln.s{width:55%}
+  .scr .rows .r{display:grid;grid-template-columns:40px 1fr 30px;gap:8px;align-items:center;padding:6px 10px;border-top:1px solid var(--line)}
+  .scr .rows .r i{height:22px;border-radius:3px;background:var(--well)}
+  .scr .rows .r b{height:8px;border-radius:3px;background:var(--well)}
+  /* 1: thin bar in the page's colours, brighter on hover */
+  .s1 .inner{scrollbar-width:thin;scrollbar-color:#4a4642 transparent}
+  .s1 .inner:hover{scrollbar-color:var(--or) transparent}
+  .s1 .inner::-webkit-scrollbar{width:6px}
+  .s1 .inner::-webkit-scrollbar-thumb{background:#4a4642;border-radius:6px}
+  .s1 .inner:hover::-webkit-scrollbar-thumb{background:var(--or)}
+  .s1 .inner::-webkit-scrollbar-track{background:transparent}
+  /* 2: the page never scrolls; only Recent does, inside its own card */
+  .s2 .inner{overflow:hidden;display:grid;grid-template-rows:auto 1fr;gap:10px}
+  .s2 .blk{margin:0}
+  .s2 .rows{overflow-y:auto;height:100%;scrollbar-width:none;-webkit-mask:linear-gradient(transparent,#000 14px,#000 calc(100% - 22px),transparent)}
+  .s2 .rows::-webkit-scrollbar{display:none}
+  .s2 .split{display:grid;grid-template-columns:1.3fr 1fr;gap:10px;min-height:0}
+  /* 3: no bar at all, edges fade, a "more" chip says there's more below */
+  .s3 .inner{scrollbar-width:none;-webkit-mask:linear-gradient(transparent,#000 18px,#000 calc(100% - 40px),transparent)}
+  .s3 .inner::-webkit-scrollbar{display:none}
+  .s3 .more{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);font:11px "Geist Mono",ui-monospace,monospace;background:var(--well);color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+
+  /* ---------- B: orange text ---------- */
+  .tc{border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:14px;display:flex;flex-direction:column;gap:10px}
+  .tc .h1{font:500 26px/1.1 Newsreader,Georgia,serif}
+  .tc .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .tc .t{font:500 17px/1.25 Newsreader,Georgia,serif}
+  .tc .sub{font-size:12.5px}
+  .tc .num{font:500 40px/1 Newsreader,Georgia,serif;margin:6px 0 2px}
+  .tc .lab{font:10.5px "Geist Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}
+  .tc .r{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-top:1px solid var(--line)}
+  .tc .r span:last-child{font-family:"Geist Mono",ui-monospace,monospace}
+  /* today */
+  .t0 .h1,.t0 .t,.t0 .num{color:var(--ink)} .t0 .sub,.t0 .r{color:var(--ink2)} .t0 .lab{color:var(--mut)}
+  /* all orange: three steps of the icon's orange */
+  .t1 .h1,.t1 .t,.t1 .num{color:var(--or)} .t1 .sub,.t1 .r{color:var(--or2)} .t1 .lab{color:var(--or3)}
+  /* orange where it matters: headline, titles and counts orange, the rest stays light */
+  .t2 .h1,.t2 .num{color:var(--or)} .t2 .t{color:var(--ink)} .t2 .sub,.t2 .r{color:var(--ink2)} .t2 .lab{color:var(--mut)} .t2 .r span:last-child{color:var(--or)}
+
+  /* ---------- C: mini wave ---------- */
+  .mini{width:320px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .strip{display:flex;align-items:center;height:30px;padding:0 10px;border-bottom:1px solid var(--line);font:11px "Geist Mono",ui-monospace,monospace;letter-spacing:.1em;color:var(--mut)}
+  .strip i{width:7px;height:7px;border-radius:50%;background:var(--gt);margin-right:6px}
+  .meta{display:flex;align-items:center;gap:10px;padding:9px 12px}
+  .meta .t{flex:1;min-width:0}
+  .meta b{display:block;font:500 15px/1.25 Newsreader,Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta small{display:block;color:var(--mut);font-size:11.5px}
+  .pp{width:34px;height:30px;border-radius:5px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink);font-size:12px}
+  /* revised C1: the button spans exactly the two text lines */
+  .meta.al{align-items:stretch}
+  .meta.al .pp{height:auto;width:40px;align-self:stretch}
+  .prog{height:3px;background:var(--well);margin:0 12px}
+  .prog i{display:block;height:3px;width:38%;background:var(--yt)}
+  .cc{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);margin-top:8px}
+  .cc div{padding:7px 12px;display:flex;flex-direction:column}
+  .cc div+div{border-left:1px solid var(--line)}
+  .cc b{font:500 21px/1.15 Newsreader,Georgia,serif}
+  /* 1: Stream Deck style: a row of neon bars across the card */
+  .bars{display:flex;align-items:flex-end;gap:3px;height:46px;padding:4px 12px 2px}
+  .bars span{flex:1;background:var(--or);border-radius:2px 2px 0 0;box-shadow:0 0 6px rgba(229,112,75,.55);height:10%;transition:height .09s linear}
+  /* 2: the progress line becomes the wave */
+  .wline{display:flex;align-items:center;gap:2px;height:22px;margin:0 12px}
+  .wline span{flex:1;border-radius:2px;background:var(--yt);opacity:.95;height:20%;transition:height .09s linear}
+  .wline span.past{background:var(--yt)}
+  .wline span.ahead{background:#4a4642;opacity:1}
+  /* 3: a small "playing" mark next to the title, like Spotify's list */
+  .eq{display:inline-flex;align-items:flex-end;gap:2px;height:14px;width:16px;margin-right:6px;vertical-align:-1px}
+  .eq span{flex:1;background:var(--or);border-radius:1px;animation:eq 1s ease-in-out infinite}
+  .eq span:nth-child(2){animation-delay:-.4s}.eq span:nth-child(3){animation-delay:-.7s}
+  @keyframes eq{0%,100%{height:25%}50%{height:100%}}
+  .q{border-left:3px solid var(--yt);padding-left:12px}
+  .q ul{margin:6px 0 0;padding-left:18px;color:var(--ink2);font-size:13px;display:flex;flex-direction:column;gap:4px}
+</style>
+
+<div class="wrap">
+  <div><span class="k">On repeat · look options</span><h1>Scroll bar, orange text, music wave</h1></div>
+  <p class="lead">Three things to choose, one option each. Nothing here is in the app yet; I'll apply what you pick.</p>
+
+  <!-- ===================== A ===================== -->
+  <section>
+    <h2>A · Instead of the grey scroll bar</h2>
+    <p class="note">Scroll inside each box to feel it. Today the whole window scrolls with Windows' standard grey bar.</p>
+    <div class="row">
+      <div class="opt"><h3>A1 · Thin bar in the page's colours</h3>
+        <div class="scr s1"><div class="inner">
+          <div class="blk"><div class="vid"></div><div class="ln"></div><div class="ln s"></div></div>
+          <div class="blk"><div class="ln"></div><div class="ln s"></div><div class="ln"></div></div>
+          <div class="blk rows"><div class="r"><i></i><b></b><b></b></div><div class="r"><i></i><b></b><b></b></div><div class="r"><i></i><b></b><b></b></div><div class="r"><i></i><b></b><b></b></div></div>
+        </div></div>
+        <p>Still a bar, but a slim dark one that turns orange when you hover it. Smallest change.</p></div>
+      <div class="opt"><h3>A2 · Nothing scrolls but Recent <span class="tag">my pick</span></h3>
+        <div class="scr s2"><div class="inner">
+          <div class="blk"><div class="vid" style="height:120px"></div></div>
+          <div class="split"><div class="blk"><div class="ln"></div><div class="ln s"></div></div>
+            <div class="blk rows"><div class="r"><i></i><b></b><b></b></div><div class="r"><i></i><b></b><b></b></div><div class="r"><i></i><b></b><b></b></div><div class="r"><i></i><b></b><b></b></div><div class="r"><i></i><b></b><b></b></div><div class="r"><i></i><b></b><b></b></div><div class="r"><i></i><b></b><b></b></div></div></div>
+        </div></div>
+        <p>The layout fits the window, so the page itself never scrolls. Only the Recent list scrolls, inside its card, with soft faded edges and no bar. Feels most like an app.</p></div>
+      <div class="opt"><h3>A3 · No bar, faded edges</h3>
+        <div class="scr s3"><div class="inner">
+          <div class="blk"><div class="vid"></div><div class="ln"></div><div class="ln s"></div></div>
+          <div class="blk"><div class="ln"></div><div class="ln s"></div><div class="ln"></div></div>
+          <div class="blk rows"><div class="r"><i></i><b></b><b></b></div><div class="r"><i></i><b></b><b></b></div><div class="r"><i></i><b></b><b></b></div><div class="r"><i></i><b></b><b></b></div></div>
+        </div><span class="more">more ↓</span></div>
+        <p>The page scrolls as now, with no bar. The bottom edge fades out and a small "more ↓" shows there's more.</p></div>
+    </div>
+  </section>
+
+  <!-- ===================== B ===================== -->
+  <section>
+    <h2>B · Orange instead of white (dark mode)</h2>
+    <p class="note">The orange is the app icon's (#E5704B). Light mode stays as it is.</p>
+    <div class="row">
+      <div class="opt"><h3>B0 · Today: white</h3>
+        <div class="tc t0"><div class="h1">On repeat</div>
+          <div class="card"><div class="t">LGTM (Looks Good to Me) - Claude Opus 5.5</div><div class="sub">Degenerative Pixels · 3 loops this session</div></div>
+          <div class="card"><div class="lab">This video</div><div class="num">128</div><div class="sub">loops since 7 Oct</div></div>
+          <div class="card"><div class="lab">Recent</div><div class="r"><span>Me at the zoo</span><span>12</span></div><div class="r"><span>Rain sounds 1 hour</span><span>3</span></div></div></div></div>
+      <div class="opt"><h3>B1 · All orange</h3>
+        <div class="tc t1"><div class="h1">On repeat</div>
+          <div class="card"><div class="t">LGTM (Looks Good to Me) - Claude Opus 5.5</div><div class="sub">Degenerative Pixels · 3 loops this session</div></div>
+          <div class="card"><div class="lab">This video</div><div class="num">128</div><div class="sub">loops since 7 Oct</div></div>
+          <div class="card"><div class="lab">Recent</div><div class="r"><span>Me at the zoo</span><span>12</span></div><div class="r"><span>Rain sounds 1 hour</span><span>3</span></div></div></div>
+        <p>Every text in three shades of the orange. Strong and warm, but long text is harder to read.</p></div>
+      <div class="opt"><h3>B2 · Orange where it matters <span class="tag">my pick</span></h3>
+        <div class="tc t2"><div class="h1">On repeat</div>
+          <div class="card"><div class="t">LGTM (Looks Good to Me) - Claude Opus 5.5</div><div class="sub">Degenerative Pixels · 3 loops this session</div></div>
+          <div class="card"><div class="lab">This video</div><div class="num">128</div><div class="sub">loops since 7 Oct</div></div>
+          <div class="card"><div class="lab">Recent</div><div class="r"><span>Me at the zoo</span><span>12</span></div><div class="r"><span>Rain sounds 1 hour</span><span>3</span></div></div></div>
+        <p>The heading and every number orange; titles and small text stay light so they're easy to read.</p></div>
+    </div>
+  </section>
+
+  <!-- ===================== C ===================== -->
+  <section>
+    <h2>C · A music wave in the mini window</h2>
+    <p class="note">The Stream Deck Spotify knob shows 16 bars driven by Spotify's real sound: Windows captures just that app's audio, the levels auto-adjust so quiet songs still fill the bars, and bars rise fast and fall slowly. The app can do the same with <b>its own</b> sound, reusing that capture code. The bars below move randomly to show the look.</p>
+    <div class="row">
+      <div class="opt"><h3>C1 · Stream Deck bars <span class="tag">my pick</span></h3>
+        <div class="mini"><div class="strip"><i></i>ON REPEAT</div>
+          <div class="meta"><div class="t"><b>LGTM (Looks Good to Me) - Claude Opus 5.5</b><small>Degenerative Pixels · 3 this session</small></div><span class="pp">❚❚</span></div>
+          <div class="bars" data-n="16"></div>
+          <div class="cc"><div><span class="k">This video</span><b>128</b></div><div><span class="k">All videos</span><b>9,731</b></div></div></div>
+        <p>A row of 16 orange neon bars across the card, in the progress line's place. Shown folded; unfolded it sits under the video.</p></div>
+      <div class="opt"><h3>C2 · The progress line becomes the wave</h3>
+        <div class="mini"><div class="strip"><i></i>ON REPEAT</div>
+          <div class="meta"><div class="t"><b>LGTM (Looks Good to Me) - Claude Opus 5.5</b><small>Degenerative Pixels · 3 this session</small></div><span class="pp">❚❚</span></div>
+          <div class="wline" data-n="40"></div>
+          <div class="cc"><div><span class="k">This video</span><b>128</b></div><div><span class="k">All videos</span><b>9,731</b></div></div></div>
+        <p>Thin bars across the width: gold up to where the song is, grey after. Progress and music in one line.</p></div>
+      <div class="opt"><h3>C3 · Small "playing" mark</h3>
+        <div class="mini"><div class="strip"><i></i>ON REPEAT</div>
+          <div class="meta"><div class="t"><b><span class="eq"><span></span><span></span><span></span></span>LGTM (Looks Good to Me) - Claude Opus 5.5</b><small>Degenerative Pixels · 3 this session</small></div><span class="pp">❚❚</span></div>
+          <div class="prog"><i></i></div>
+          <div class="cc"><div><span class="k">This video</span><b>128</b></div><div><span class="k">All videos</span><b>9,731</b></div></div></div>
+        <p>Three little bouncing bars before the title, like Spotify's "now playing". Decorative, not driven by the sound.</p></div>
+    </div>
+    <div class="row">
+      <div class="opt"><h3>C1 · revised: play/pause the height of the title + description <span class="tag">Monkey's pick</span></h3>
+        <div class="mini"><div class="strip"><i></i>ON REPEAT</div>
+          <div class="meta al"><div class="t"><b>LGTM (Looks Good to Me) - Claude Opus 5.5</b><small>Degenerative Pixels · 3 this session</small></div><span class="pp">❚❚</span></div>
+          <div class="bars" data-n="16"></div>
+          <div class="cc"><div><span class="k">This video</span><b>128</b></div><div><span class="k">All videos</span><b>9,731</b></div></div></div>
+        <p>The button's top lines up with the song name and its bottom with the description, so it reads as one block with them. Its right edge lines up with the bars and the counters below.</p></div>
+      <div class="opt"></div><div class="opt"></div>
+    </div>
+    <div class="q"><h3 style="margin:0;font-size:14px">To know before picking C1 or C2</h3>
+      <ul>
+        <li><b>Real sound:</b> the bars would follow the music for real, with the same capture as the Stream Deck knob. It captures only On repeat's own audio, never other apps.</li>
+        <li><b>Why the page can't do it itself:</b> the sound comes from YouTube's player inside its own protected frame, so the page can't measure it. The app would measure it and send the levels to the page about 30 times a second.</li>
+        <li><b>Paused or muted:</b> the bars drop flat and dim.</li>
+      </ul></div>
+  </section>
+</div>
+
+<script>
+  // fake levels for the mockup only: smooth random motion, rising fast and falling slow like the Stream Deck knob
+  for (const box of document.querySelectorAll("[data-n]")) {
+    const n = +box.dataset.n, line = box.classList.contains("wline");
+    for (let i = 0; i < n; i++) box.appendChild(document.createElement("span"));
+    const bars = [...box.children], shown = new Array(n).fill(.1);
+    setInterval(() => {
+      bars.forEach((b, i) => {
+        const shape = line ? .55 + .45 * Math.sin(i / 3 + Date.now() / 700) : 1 - Math.abs(i - n / 3) / n;
+        const target = Math.max(.08, Math.min(1, shape * (.35 + Math.random() * .75)));
+        shown[i] += (target - shown[i]) * (target > shown[i] ? .7 : .25);
+        b.style.height = Math.round(shown[i] * 100) + "%";
+        if (line) b.className = i < n * .38 ? "past" : "ahead";
+      });
+    }, 90);
+  }
+</script>

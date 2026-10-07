@@ -1,0 +1,151 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playlist Options</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  /* On repeat, playlists, 2026-10-08. Monkey: "if we want to add the playlist
+     feature, how would that fit?" Static mockup in the app's current look
+     (layout D dark, H1 header, B2 orange, C1 bars). Two kinds of playlist and
+     where each lands in the full and mini windows. Nothing here is built. */
+  :root{color-scheme:dark;--bg:#1E1D1B;--card:#262523;--line:#353331;--ink:#ECEAE5;--ink2:#C4C1BA;--mut:#8E8B85;--well:#2E2C29;--hl:#E5704B;--y:#3A3220;--yt:#E6C474;--g:#253226;--gt:#9CC79F;--btn:#ECEAE5}
+  *{box-sizing:border-box}
+  body{margin:0;padding:24px 16px 64px;background:#151413;color:var(--ink);font:14px/1.55 "Helvetica Neue",-apple-system,"Segoe UI",sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+  h1.page{font:500 30px/1.1 Newsreader,Georgia,serif;margin:0}
+  h2{font:500 22px/1.2 Newsreader,Georgia,serif;margin:0}
+  .lead,.note{color:var(--ink2);margin:0;max-width:900px}
+  .note{font-size:13px}
+  section{display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--line);padding-top:22px}
+  .row{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+  .k{font:11px "Geist Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+  .tag{font:10px "Geist Mono",ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:1px 7px;background:var(--g);color:var(--gt);margin-left:6px;vertical-align:2px}
+  .cell{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);border-radius:6px;padding:4px 10px;color:var(--ink);font-size:12.5px;white-space:nowrap}
+  .btn.p{background:var(--btn);color:var(--bg);border-color:var(--btn)}
+  .seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-top:10px}
+  .seg span{flex:1;text-align:center;padding:6px 0;font-size:12.5px;color:var(--ink2)}
+  .seg span+span{border-left:1px solid var(--line)}
+  .seg .on{background:var(--btn);color:var(--bg)}
+  .bar{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:6px 6px 6px 12px;color:var(--ink)}
+  .bar span:not(.btn){flex:1;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tabs{display:flex;gap:16px;border-bottom:1px solid var(--line);margin-bottom:6px}
+  .tabs span{padding:4px 0 8px;font:11px "Geist Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+  .tabs .on{color:var(--ink);box-shadow:inset 0 -2px var(--hl)}
+  .list{margin:0;padding:0;list-style:none}
+  .list li{display:grid;grid-template-columns:18px 56px minmax(0,1fr) auto 22px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .list li:last-child{border-bottom:0}
+  .list .th{aspect-ratio:16/9;border-radius:4px;background:var(--well);border:1px solid var(--line)}
+  .list b{font-weight:500;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .list small{color:var(--mut);font-size:11.5px}
+  .list .n{font:12.5px "Geist Mono",ui-monospace,monospace;color:var(--hl)}
+  .list .ix{font:11px "Geist Mono",ui-monospace,monospace;color:var(--mut);text-align:right}
+  .list li.now{background:linear-gradient(90deg,rgba(229,112,75,.10),transparent 70%)}
+  .list li.now .ix{color:var(--hl)}
+  .grip{color:var(--mut);text-align:center;cursor:grab}
+  .pl{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .pl b{font-weight:500}
+  .pl small{grid-column:1;color:var(--mut);font-size:11.5px}
+  .pl .btn{grid-row:span 2;align-self:center}
+  /* mini */
+  .mini{width:320px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .strip{display:flex;align-items:center;height:30px;padding:0 10px;border-bottom:1px solid var(--line);font:11px "Geist Mono",ui-monospace,monospace;letter-spacing:.1em;color:var(--mut)}
+  .strip i{width:7px;height:7px;border-radius:50%;background:var(--gt);margin-right:6px}
+  .strip .sp{flex:1}
+  .meta{display:flex;align-items:stretch;gap:8px;padding:9px 12px}
+  .meta .t{flex:1;min-width:0}
+  .meta b{display:block;font:500 15px/1.25 Newsreader,Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta small{display:block;color:var(--mut);font-size:11.5px}
+  .pp{width:34px;border-radius:5px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink);font-size:12px}
+  .pp.sm{width:28px;color:var(--ink2)}
+  .bars{display:flex;align-items:flex-end;gap:3px;height:36px;padding:2px 12px 6px}
+  .bars span{flex:1;background:var(--hl);border-radius:2px 2px 0 0;box-shadow:0 0 6px rgba(229,112,75,.55)}
+  .cc{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line)}
+  .cc div{padding:7px 12px;display:flex;flex-direction:column}
+  .cc div+div{border-left:1px solid var(--line)}
+  .cc b{font:500 21px/1.15 Newsreader,Georgia,serif;color:var(--hl)}
+  .pos{font:11px "Geist Mono",ui-monospace,monospace;color:var(--hl);letter-spacing:0}
+  .q{border-left:3px solid var(--yt);padding-left:12px}
+  .q ul{margin:6px 0 0;padding-left:18px;color:var(--ink2);font-size:13px;display:flex;flex-direction:column;gap:5px}
+  .col{display:flex;flex-direction:column;gap:8px;flex:1;min-width:300px}
+  .col h3{margin:0;font-size:14.5px}
+  .col p{margin:0;color:var(--ink2);font-size:12.5px}
+</style>
+
+<div class="wrap">
+  <div><span class="k">On repeat · playlists</span><h1 class="page">How a playlist would fit</h1></div>
+  <p class="lead">Nothing new to learn. The <b>Loop</b> card gains a third mode, the <b>Recent</b> card gets a Playlists tab, and the mini window gets previous/next and a "3 / 12" position. Counts stay per video: each song in a playlist adds to its own lifetime count and to the all-videos total, as today.</p>
+
+  <!-- ===================== P1 ===================== -->
+  <section>
+    <h2>P1 · Paste a YouTube playlist</h2>
+    <p class="note">Paste a playlist link (anything with <code>list=</code>) into the same box. The YouTube player plays the list itself, and "Loop: playlist" starts it again from the top after the last song.</p>
+    <div class="row">
+      <div class="col"><h3>Search box and Loop card</h3>
+        <div class="bar"><span>https://www.youtube.com/playlist?list=PL…example</span><span class="btn p">Play list</span></div>
+        <div class="cell"><div class="k">Loop</div>
+          <div class="seg"><span>One video</span><span>Part (A–B)</span><span class="on">Playlist</span></div>
+          <p class="note" style="margin-top:8px">Playing <b>Lofi study mix</b> · song 3 of 12 · then back to 1.</p></div>
+      </div>
+      <div class="col"><h3>The list, in the Recent card's place</h3>
+        <div class="cell"><div class="tabs"><span>Recent</span><span class="on">Now playing · 12</span><span>Playlists</span></div>
+          <ul class="list">
+            <li><span class="ix">1</span><div class="th"></div><div><b>Morning coffee</b><small>Channel</small></div><span class="n">41</span><span></span></li>
+            <li><span class="ix">2</span><div class="th"></div><div><b>Rainy window</b><small>Channel</small></div><span class="n">38</span><span></span></li>
+            <li class="now"><span class="ix">▶ 3</span><div class="th"></div><div><b>Late train home</b><small>Channel · playing</small></div><span class="n">35</span><span></span></li>
+            <li><span class="ix">4</span><div class="th"></div><div><b>Paper lanterns</b><small>Channel</small></div><span class="n">29</span><span></span></li>
+          </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== P2 ===================== -->
+  <section>
+    <h2>P2 · Your own playlists in the app</h2>
+    <p class="note">Make lists from anything you've played or found: a "+" on each Recent or search row adds it to a list. Lists are saved on this PC next to your counts. You can drag to reorder, play in order or shuffled, and remove songs (with Undo, like Recent).</p>
+    <div class="row">
+      <div class="col"><h3>Playlists tab</h3>
+        <div class="cell"><div class="tabs"><span>Recent</span><span class="on">Playlists</span></div>
+          <div class="pl"><b>Focus</b><span class="btn">▶ Play</span><small>14 songs · 1 h 02 · 412 loops</small></div>
+          <div class="pl"><b>Gym</b><span class="btn">▶ Play</span><small>9 songs · 31 min · 128 loops</small></div>
+          <div class="pl"><b>Evening</b><span class="btn">▶ Play</span><small>6 songs · 24 min · 57 loops</small></div>
+          <div style="margin-top:10px"><span class="btn">+ New playlist</span></div></div>
+      </div>
+      <div class="col"><h3>Inside a playlist</h3>
+        <div class="cell"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><b style="font:500 18px Newsreader,Georgia,serif">Focus</b><span style="flex:1"></span><span class="btn">⇄ Shuffle</span><span class="btn p">▶ Play</span></div>
+          <ul class="list">
+            <li><span class="grip">⋮⋮</span><div class="th"></div><div><b>Late train home</b><small>3:41</small></div><span class="n">35</span><span style="color:var(--mut)">×</span></li>
+            <li class="now"><span class="grip">⋮⋮</span><div class="th"></div><div><b>Me at the zoo</b><small>0:19 · playing</small></div><span class="n">12</span><span style="color:var(--mut)">×</span></li>
+            <li><span class="grip">⋮⋮</span><div class="th"></div><div><b>Rain sounds 1 hour</b><small>1:02:10</small></div><span class="n">3</span><span style="color:var(--mut)">×</span></li>
+          </ul></div>
+      </div>
+      <div class="col"><h3>Adding from Recent</h3>
+        <div class="cell"><div class="tabs"><span class="on">Recent</span><span>Playlists</span></div>
+          <ul class="list">
+            <li><span></span><div class="th"></div><div><b>LGTM (Looks Good to Me) - Claude Opus 5.5</b><small>Degenerative Pixels</small></div><span class="n">4</span><span style="color:var(--ink)">+</span></li>
+          </ul>
+          <div style="margin:8px 0 0 auto;width:190px;border:1px solid var(--line);border-radius:8px;background:var(--well);padding:6px;font-size:12.5px">
+            <div style="padding:4px 6px;color:var(--mut)">Add to…</div><div style="padding:4px 6px">Focus</div><div style="padding:4px 6px">Gym</div><div style="padding:4px 6px">Evening</div><div style="padding:4px 6px;color:var(--hl)">+ New playlist</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== mini ===================== -->
+  <section>
+    <h2>The mini window with a playlist (P1 or P2)</h2>
+    <div class="row">
+      <div class="col" style="flex:0 0 auto"><div class="mini"><div class="strip"><i></i>ON REPEAT<span class="sp"></span><span class="pos">3 / 12</span></div>
+        <div class="meta"><div class="t"><b>Late train home</b><small>Focus · 2 this session</small></div><span class="pp sm">⏮</span><span class="pp">❚❚</span><span class="pp sm">⏭</span></div>
+        <div class="bars"><span style="height:30%"></span><span style="height:55%"></span><span style="height:70%"></span><span style="height:48%"></span><span style="height:82%"></span><span style="height:64%"></span><span style="height:58%"></span><span style="height:40%"></span><span style="height:52%"></span><span style="height:36%"></span><span style="height:44%"></span><span style="height:30%"></span><span style="height:26%"></span><span style="height:18%"></span><span style="height:12%"></span><span style="height:8%"></span></div>
+        <div class="cc"><div><span class="k">This video</span><b>35</b></div><div><span class="k">All videos</span><b>9,731</b></div></div></div></div>
+      <div class="col"><p>Previous and next appear beside play/pause only when a playlist is playing. The strip shows the position. With one video looping, the mini window stays exactly as it is now.</p></div>
+    </div>
+  </section>
+
+  <div class="q"><h3 style="margin:0;font-size:14px">To decide</h3>
+    <ul>
+      <li><b>P1, P2 or both?</b> My pick is <b>both, P1 first</b>. P1 is the smaller step because YouTube's player already plays and loops lists. P2 is the bigger one: storage, the "Add to…" menu, drag to reorder, shuffle.</li>
+      <li><b>What counts as a listen in a playlist?</b> Today a loop counts when a video reaches its end. In a playlist the player moves straight to the next song, so the app would count a song when it plays to its end, not when you skip it. That matches the current rule.</li>
+      <li><b>Not checked yet:</b> exactly which events the YouTube player sends between playlist songs. I'd test that first, because the counting depends on it.</li>
+    </ul></div>
+</div>

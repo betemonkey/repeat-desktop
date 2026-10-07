@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- filled in by the app as it serves this page; sent with every API call -->
+<meta name="app-token" content="{{APP_TOKEN}}">
+<title>On repeat</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e5704b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 2l4 4-4 4'/%3E%3Cpath d='M3 11v-1a4 4 0 0 1 4-4h14'/%3E%3Cpath d='M7 22l-4-4 4-4'/%3E%3Cpath d='M21 13v1a4 4 0 0 1-4 4H3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+:root{color-scheme:light;--bg:#F7F6F3;--card:#FFFFFF;--line:#EAEAEA;--ink:#2F3437;--ink2:#555a5d;--mut:#787774;--btn:#111111;--btnink:#FFFFFF;--y:#FBF3DB;--yt:#956400;--g:#EDF3EC;--gt:#346538;--r:#FDEBEC;--rt:#9F2F2D;--well:#EFEDE8}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#1E1D1B;--card:#262523;--line:#353331;--ink:#ECEAE5;--ink2:#C4C1BA;--mut:#8E8B85;--btn:#ECEAE5;--btnink:#1E1D1B;--y:#3A3220;--yt:#E6C474;--g:#253226;--gt:#9CC79F;--r:#3A2526;--rt:#E79C9A;--well:#2E2C29;--hl:#E5704B}
+*{box-sizing:border-box}
+body{margin:0;padding:24px 16px 56px;background:var(--bg);color:var(--ink);font:14px/1.6 "Helvetica Neue",-apple-system,"Segoe UI",sans-serif}
+[hidden]{display:none!important}
+svg.i{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.wrap{max-width:1040px;margin:0 auto}
+header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+header a{color:var(--mut);text-decoration:none;font-size:13px;display:inline-flex;align-items:center;gap:4px}
+header .sp{flex:1}
+h1{font:500 34px/1.1 Newsreader,Georgia,serif;letter-spacing:-.03em;margin:0}
+.hintrow{display:flex;justify-content:flex-end;margin:-4px 0 12px}
+kbd{font:11px "Geist Mono",ui-monospace,monospace;border:1px solid var(--line);border-radius:4px;background:var(--bg);padding:1px 5px;color:var(--ink2)}
+.hint{font-size:12.5px;color:var(--mut)}
+.btn{font:500 13px "Helvetica Neue",-apple-system,sans-serif;background:var(--btn);color:var(--btnink);border:1px solid var(--btn);border-radius:5px;padding:6px 14px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;text-decoration:none}
+.btn:active{transform:scale(.98)}
+.btn.q{background:var(--card);color:var(--ink);border-color:var(--line)}
+.btn.sm{padding:3px 9px;font-size:12px}
+form.search{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:6px 6px 6px 12px;margin-bottom:10px;color:var(--mut)}
+form.search input{flex:1;min-width:0;border:0;background:none;color:var(--ink);font:inherit;outline:none;padding:4px 0}
+.msg{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:13px;color:var(--ink2)}
+.msg.bad{background:var(--r);color:var(--rt);border-color:transparent}
+.msg a{color:inherit}
+.keys{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:16px 20px;margin-bottom:12px;font-size:13.5px}
+.keys .khead{display:flex;align-items:center;gap:10px}
+.keys .khead .sp{flex:1}
+.keys .khead b{font:500 18px/1.2 Newsreader,Georgia,serif}
+.keys ol{margin:10px 0;padding-left:20px;display:flex;flex-direction:column;gap:5px;color:var(--ink2)}
+.keys a{color:var(--ink)}
+.keys code{font:12px "Geist Mono",ui-monospace,monospace;background:var(--well);padding:0 4px;border-radius:4px}
+.keys .krow{display:flex;gap:8px;margin:8px 0}
+.keys .krow input{flex:1;min-width:0;font:13px "Geist Mono",ui-monospace,monospace;border:1px solid var(--line);border-radius:5px;background:var(--bg);color:var(--ink);padding:6px 10px}
+.keys .ok{color:var(--gt)}.keys .bad{color:var(--rt)}
+.results{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin-bottom:12px}
+.bento{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.cell{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0}
+.k{font:11px "Geist Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.num{font:500 56px/1 Newsreader,Georgia,serif;letter-spacing:-.04em;margin:10px 0 6px}
+.num.s{font-size:36px}
+.sub{font-size:12.5px;color:var(--mut)}
+.tag{display:inline-block;font:10.5px "Geist Mono",ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;border-radius:9999px;padding:2px 8px;white-space:nowrap}
+.tag.y{background:var(--y);color:var(--yt)}.tag.g{background:var(--g);color:var(--gt)}.tag.n{background:var(--well);color:var(--mut)}
+/* the player cell doubles as the compact card: same element, so the YouTube
+   iframe is never moved (moving an iframe reloads it) */
+#card{grid-column:span 4;grid-row:span 2;padding:0;overflow:hidden;display:flex;flex-direction:column}
+.grip,.ccount{display:none}
+.vid{aspect-ratio:16/9;min-height:200px;background:var(--well);position:relative}
+.vid iframe,.vid #player{position:absolute;inset:0;width:100%;height:100%;border:0}
+.empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:13px;padding:20px;text-align:center}
+.meta{padding:14px 20px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--line)}
+.meta .t{flex:1;min-width:0}
+.meta b{display:block;font:500 20px/1.2 Newsreader,Georgia,serif;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.meta small{color:var(--mut);font-size:12.5px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-life,.c-all{grid-column:span 2}
+.c-loop,.c-recent{grid-column:span 3}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-top:12px}
+.seg button{flex:1;padding:6px 0;font:inherit;font-size:12.5px;color:var(--ink2);background:none;border:0;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg .on{background:var(--btn);color:var(--btnink)}
+.ab{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.ab div{border:1px solid var(--line);border-radius:6px;padding:8px 10px;display:flex;flex-direction:column;gap:4px}
+.ab input{font:500 15px "Geist Mono",ui-monospace,monospace;border:0;background:none;color:var(--ink);width:100%;padding:0;outline:none}
+.ab button{align-self:flex-start;font-size:12px;font-family:inherit;background:none;border:0;color:var(--mut);padding:0;cursor:pointer;text-decoration:underline}
+.list{margin:6px 0 0;padding:0;list-style:none}
+.list li{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.list li>div{min-width:0}  /* a long title ellipsises instead of widening the page */
+.list li:last-child{border-bottom:0}
+.list li:hover b{text-decoration:underline}
+.th{aspect-ratio:16/9;border-radius:4px;background:var(--well) center/cover;border:1px solid var(--line)}
+.list b{font-weight:500;font-size:13.5px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list small{color:var(--mut);font-size:12px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list .n{font:13px "Geist Mono",ui-monospace,monospace;color:var(--ink2);text-align:right}
+#rp-recent li{grid-template-columns:64px minmax(0,1fr) auto 24px}
+.list .del{width:24px;height:24px;border:0;border-radius:5px;background:none;color:var(--mut);font-size:16px;line-height:1;cursor:pointer;opacity:.35}
+.list li:hover .del{opacity:1}
+.list .del:hover{background:var(--r);color:var(--rt)}
+/* ---- playlists (P2, 2026-10-08) ---- */
+.tabs{display:flex;gap:18px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.tabs button{background:none;border:0;padding:2px 0 8px;font:11px "Geist Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);cursor:pointer}
+.tabs button.on{color:var(--ink);box-shadow:inset 0 -2px var(--hl,var(--btn))}
+.list .add{width:24px;height:24px;border:0;border-radius:5px;background:none;color:var(--mut);cursor:pointer;opacity:.45;display:flex;align-items:center;justify-content:center}
+.list li:hover .add{opacity:1}
+.list .add:hover{background:var(--well);color:var(--ink)}
+#rp-recent li,#rp-res li{grid-template-columns:64px minmax(0,1fr) auto 24px 24px}
+#rp-res li{grid-template-columns:64px minmax(0,1fr) auto 24px}
+.plhead{display:flex;align-items:center;gap:8px;margin:6px 0 4px;flex-wrap:wrap}
+.plhead .nm{font:500 19px/1.2 Newsreader,Georgia,serif;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:text}
+.plhead input{flex:1;min-width:0;font:500 17px Newsreader,Georgia,serif;border:1px solid var(--line);border-radius:5px;background:var(--bg);color:var(--ink);padding:2px 8px}
+.plhead .back{background:none;border:0;color:var(--mut);cursor:pointer;font-size:13px;padding:2px 4px}
+.btn.on{background:var(--well);border-color:var(--hl,var(--btn))}
+.plrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.plrow b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plrow small{grid-column:1;color:var(--mut);font-size:12px}
+.plrow .btn{grid-row:span 2;align-self:center}
+.plrow:hover b{text-decoration:underline}
+.plnew{display:flex;gap:8px;margin-top:10px}
+.plnew input{flex:1;min-width:0;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:5px;background:var(--bg);color:var(--ink);padding:5px 10px}
+#rp-lists .list li{grid-template-columns:16px 56px minmax(0,1fr) auto 24px}
+#rp-lists .drag{color:var(--mut);cursor:grab;text-align:center;font-size:12px;letter-spacing:-2px;user-select:none}
+#rp-lists li.now{background:linear-gradient(90deg,color-mix(in srgb,var(--hl,var(--btn)) 12%,transparent),transparent 70%)}
+#rp-lists li.now b{color:var(--hl,var(--ink))}
+#rp-lists li.dragging{opacity:.4}
+#rp-lists li.over-top{box-shadow:inset 0 2px var(--hl,var(--btn))}
+#rp-lists li.over-bottom{box-shadow:inset 0 -2px var(--hl,var(--btn))}
+.empty-note{color:var(--mut);font-size:13px;padding:10px 0}
+.menu{position:fixed;z-index:20;min-width:200px;max-width:280px;max-height:320px;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px;box-shadow:0 8px 24px rgba(0,0,0,.25);font-size:13px}
+.menu .mh{padding:5px 8px;color:var(--mut);font-size:11.5px}
+.menu > button{display:block;width:100%;text-align:left;background:none;border:0;border-radius:5px;padding:6px 8px;color:var(--ink);font:inherit;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.menu > button:hover{background:var(--well)}
+.menu .new{color:var(--hl,var(--ink))}
+.menu form{display:flex;gap:4px;padding:4px}
+.menu input{flex:1;min-width:0;font:inherit;border:1px solid var(--line);border-radius:5px;background:var(--bg);color:var(--ink);padding:4px 8px}
+.btn.skip{padding:6px 9px}
+/* folded mini in a playlist: the bars and "1 / 3" already say it's playing, so the
+   label gives its room to the title (it was squeezed to "LGTM (Loo…") */
+body.mini.queue .meta .tag{display:none!important}
+body.mini #rp-prev,body.mini #rp-next{align-self:stretch;height:auto;width:30px;padding:0;justify-content:center;color:var(--ink2)}
+.appbar .pos{font:11px "Geist Mono",ui-monospace,monospace;color:var(--hl,var(--ink2));margin-right:6px;letter-spacing:0}
+/* compact mode: everything but the card goes, the card floats and drags */
+body.compact{padding:0;overflow:hidden;height:100vh}
+body.compact .wrap>*:not(.bento),body.compact .bento>*:not(#card){display:none!important}
+body.compact #card{position:fixed;width:320px;left:var(--x,24px);top:var(--y,24px);z-index:10;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.18)}
+body.compact .grip{display:flex;align-items:center;gap:6px;padding:6px 8px 6px 12px;cursor:grab;user-select:none;touch-action:none;font:11px "Geist Mono",ui-monospace,monospace;letter-spacing:.1em;color:var(--mut);border-bottom:1px solid var(--line)}
+body.compact .grip:active{cursor:grabbing}
+body.compact .grip .sp{flex:1}
+body.compact .grip button{background:none;border:0;color:var(--ink2);cursor:pointer;padding:2px 4px;display:flex}
+body.compact .vid{aspect-ratio:auto;width:320px;height:200px}
+body.compact .meta{padding:10px 12px;gap:10px}
+body.compact .meta b{font-size:15px}
+body.compact .meta .tag,body.compact .meta .yt{display:none}
+body.compact .ccount{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line)}
+/* mini: this page inside the always-on-top pop-out window (?mini=1). The OS
+   window frame moves and resizes it; the card just fills it */
+body.mini{padding:0;overflow:hidden}
+body.mini .wrap>*:not(.bento):not(#rp-msg),body.mini .bento>*:not(#card){display:none!important}
+body.mini #rp-msg{position:fixed;left:0;right:0;bottom:0;z-index:5;margin:0;border-radius:0;font-size:12px;padding:8px 10px}
+body.mini .bento{display:block}
+body.mini #card{border:0;border-radius:0;height:100vh}
+body.mini .vid{aspect-ratio:auto;flex:1;min-height:200px}
+body.mini .meta{padding:8px 12px;gap:10px}
+body.mini .meta b{font-size:15px}
+body.mini .meta .tag,body.mini .meta .yt{display:none}
+body.mini .ccount{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line)}
+/* progress line, mini only (the full page has YouTube's own bar) */
+.prog{display:none;height:3px;background:var(--well);margin:0 12px 8px}
+.prog i{display:block;height:3px;width:0;background:var(--yt);transition:width .4s linear}
+body.mini .prog,body.compact .prog{display:block}
+/* C1 (2026-10-08): the Stream Deck knob's bars, driven by the app's own sound
+   (AppAudio.cs); in the app's mini window they take the progress line's place */
+/* A3: no scroll bar, faded edges, a "more" chip */
+html{scrollbar-width:none}
+html::-webkit-scrollbar{display:none}
+.fade{position:fixed;left:0;right:0;height:40px;pointer-events:none;z-index:4}
+.fade.top{top:0;background:linear-gradient(var(--bg),transparent)}
+.fade.bottom{bottom:0;height:56px;background:linear-gradient(transparent,var(--bg))}
+.more{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:5;font:11px "Geist Mono",ui-monospace,monospace;background:var(--well);color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:3px 12px;cursor:pointer}
+.more:hover{color:var(--ink)}
+.bars{display:none}
+body.app.mini .prog{display:none}
+body.app.mini .bars{display:flex;align-items:flex-end;gap:3px;height:40px;padding:2px 12px 6px}
+.bars span{flex:1;height:6%;background:#E5704B;border-radius:2px 2px 0 0;box-shadow:0 0 6px rgba(229,112,75,.55);transition:height 60ms linear}
+.bars.quiet span{opacity:.35;box-shadow:none}
+/* revised C1: play/pause spans exactly the title + description lines */
+body.mini .meta{align-items:stretch}
+body.mini .meta .tag{align-self:center}
+body.mini #rp-pp{align-self:stretch;height:auto;width:40px;justify-content:center;padding:0}
+/* desktop app (?app=1 inside RepeatDesktop.exe): its mini window is frameless,
+   so .appbar is the title bar; the window height follows #card (the app asks) */
+.appbar{display:none}
+body.app.mini .appbar{display:flex;align-items:center;gap:2px;height:30px;padding:0 4px 0 10px;cursor:grab;user-select:none;border-bottom:1px solid var(--line)}
+body.app.mini .appbar .nm{flex:1;display:flex;align-items:center;gap:6px;font:11px "Geist Mono",ui-monospace,monospace;letter-spacing:.1em;color:var(--mut)}
+body.app.mini .appbar .nm i{width:7px;height:7px;border-radius:50%;background:var(--gt)}
+body.app.mini .appbar button{width:26px;height:24px;border:0;border-radius:5px;background:none;color:var(--ink2);display:flex;align-items:center;justify-content:center;cursor:pointer}
+body.app.mini .appbar button:hover{background:var(--well);color:var(--ink)}
+body.app.mini .appbar button.on{background:var(--well);color:var(--ink)}
+body.app.mini{overflow:hidden;background:var(--card)}
+body.app.mini #card{height:auto}
+body.app.mini .vid{flex:none;height:200px}
+/* fold: the video is hidden but stays in the page, so it keeps playing.
+   Monkey's call against YouTube's 200 px player minimum (2026-10-07) */
+body.app.mini.folded .vid{height:0;min-height:0;overflow:hidden}
+body.app.mini.folded .meta .tag{display:inline-block}
+body.app .hide-app{display:none!important}
+.ccount div{padding:8px 12px;display:flex;flex-direction:column}
+.ccount div+div{border-left:1px solid var(--line)}
+.ccount b{font:500 22px/1.15 Newsreader,Georgia,serif}
+/* B2 (Monkey, 2026-10-08): in dark mode the heading and every number are the
+   icon's orange; titles and small text stay light so they read easily */
+:root[data-theme="dark"] h1,:root[data-theme="dark"] .num,:root[data-theme="dark"] .ccount b,:root[data-theme="dark"] .list .n{color:var(--hl)}
+@media (max-width:780px){
+  .bento{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #card,.c-loop,.c-recent{grid-column:span 2}
+  .c-life,.c-all{grid-column:span 1}
+  .num{font-size:40px}
+  h1{font-size:28px}
+  .hintrow{display:none}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="currentColor"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 4h3v16H7zM14 4h3v16h-3z" fill="currentColor"/></symbol>
+  <symbol id="i-min" viewBox="0 0 24 24"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></symbol>
+  <symbol id="i-max" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="M6 5v14" /><path d="M19 5l-10 7 10 7z" fill="currentColor"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M18 5v14" /><path d="M5 5l10 7-10 7z" fill="currentColor"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+  <symbol id="i-fold" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+  <symbol id="i-unfold" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 17v5M5 17h14l-2-4V5H7v8z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+</svg>
+<div class="fade top" id="rp-fade-top" hidden></div><div class="fade bottom" id="rp-fade-bottom" hidden></div>
+<button class="more" id="rp-more" hidden>more &#8595;</button>
+<div class="menu" id="rp-menu" hidden></div>
+<div class="wrap">
+  <!-- H1 (Monkey, 2026-10-08, mockups/header-options.html): heading and buttons
+       on one line; the keyboard hint sits under the search bar it's about -->
+  <header>
+    <h1>On repeat</h1>
+    <span class="sp"></span>
+    <button class="btn q sm" id="rp-keybtn" title="YouTube search key"><svg class="i"><use href="#i-key"/></svg>Search key</button>
+    <button class="btn q sm" id="rp-theme" title="Light / dark"><svg class="i"><use href="#i-moon"/></svg></button>
+    <button class="btn q sm" id="rp-compact" title="Small always-on-top window"><svg class="i"><use href="#i-min"/></svg>Pop out</button>
+  </header>
+
+  <form class="search" id="rp-form" autocomplete="off">
+    <svg class="i"><use href="#i-search"/></svg>
+    <input id="rp-q" placeholder="Paste a YouTube link, or search" aria-label="YouTube link or search">
+    <button class="btn" type="submit" id="rp-go">Play</button>
+  </form>
+  <div class="hintrow"><span class="hint">Search <kbd>/</kbd> · Play <kbd>K</kbd> · A–B <kbd>L</kbd></span></div>
+  <div class="msg" id="rp-msg" hidden></div>
+  <!-- YouTube search needs a Data API key of Monkey's own; pasting links never
+       does. The key is checked with Google, then kept in the app's settings on
+       this PC; the page never sees it again. -->
+  <div class="keys" id="rp-keys" hidden>
+    <div class="khead"><b>Search with your own YouTube key</b><span class="sp"></span><button class="btn q sm" id="rp-keyclose">Close</button></div>
+    <p class="sub" id="rp-keystate">Pasting links always works. To also search by name, add a free YouTube Data API key (about 5 minutes, once).</p>
+    <ol>
+      <li>Open <a href="https://console.cloud.google.com/" target="_blank" rel="noopener">console.cloud.google.com</a> and sign in with your Google account.</li>
+      <li>At the top, open the project picker → <b>New project</b>. Name it <i>On repeat</i>, press <b>Create</b>, then make sure it's the selected project.</li>
+      <li>Open <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">YouTube Data API v3</a> in the API Library and press <b>Enable</b>.</li>
+      <li>Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">APIs &amp; Services → Credentials</a> → <b>+ Create credentials</b> → <b>API key</b>. Copy the key; it starts with <code>AIza</code>.</li>
+      <li>Recommended: open the key's settings → <b>API restrictions</b> → <b>Restrict key</b> → tick <b>YouTube Data API v3</b> → <b>Save</b>. Then the key can't be used for anything else.</li>
+      <li>Paste it below and press <b>Save</b>. The app checks it with Google before keeping it.</li>
+    </ol>
+    <form class="krow" id="rp-keyform" autocomplete="off">
+      <input id="rp-key" type="password" placeholder="AIza…" aria-label="YouTube Data API key" spellcheck="false">
+      <button class="btn" type="submit">Save</button>
+      <button class="btn q" type="button" id="rp-keyremove" hidden>Remove key</button>
+    </form>
+    <p class="sub">Free daily quota: 10,000 units. A search costs 100, so about 100 searches a day. The key stays on this PC, in <code>%APPDATA%\RepeatDesktop\settings.json</code>.</p>
+  </div>
+  <div class="results" id="rp-results" hidden><ul class="list" id="rp-res"></ul></div>
+
+  <div class="bento">
+    <div class="cell" id="card">
+      <div class="grip" id="rp-grip">ON REPEAT<span class="sp"></span>
+        <button id="rp-expand" title="Back to the full page"><svg class="i"><use href="#i-max"/></svg></button></div>
+      <!-- the desktop app's mini window has no OS frame: this strip is its title
+           bar (drag to move), with fold / always-on-top / back-to-full -->
+      <div class="appbar" id="rp-appbar"><span class="nm"><i></i>ON REPEAT</span><span class="pos" id="rp-pos" hidden></span>
+        <button id="rp-fold" title="Hide the video (F)"><svg class="i"><use href="#i-fold"/></svg></button>
+        <button id="rp-pin" title="Always on top"><svg class="i"><use href="#i-pin"/></svg></button>
+        <button id="rp-full" title="Back to the full window (Esc)"><svg class="i"><use href="#i-max"/></svg></button></div>
+      <div class="vid"><div id="player"></div><div class="empty" id="rp-empty">Paste a link or search to start.</div></div>
+      <div class="meta">
+        <div class="t"><b id="rp-title">Nothing playing</b><small id="rp-sub">&nbsp;</small></div>
+        <span class="tag n" id="rp-state">idle</span>
+        <a class="btn q sm yt" id="rp-yt" target="_blank" rel="noopener" title="Open on YouTube" hidden><svg class="i"><use href="#i-ext"/></svg></a>
+        <button class="btn q skip" id="rp-prev" title="Previous song" hidden><svg class="i"><use href="#i-prev"/></svg></button>
+        <button class="btn q" id="rp-pp" title="Play / pause (K)" disabled><svg class="i"><use href="#i-play"/></svg></button>
+        <button class="btn q skip" id="rp-next" title="Next song" hidden><svg class="i"><use href="#i-next"/></svg></button>
+      </div>
+      <div class="prog" id="rp-prog"><i></i></div>
+      <div class="bars" id="rp-bars" aria-hidden="true"></div>
+      <div class="ccount">
+        <div><span class="k">This video</span><b id="rp-c-life">0</b></div>
+        <div><span class="k">All videos</span><b id="rp-c-all">0</b></div>
+      </div>
+    </div>
+
+    <div class="cell c-life">
+      <div class="k">This video</div>
+      <div class="num" id="rp-life">0</div>
+      <div class="sub" id="rp-life-sub">loops</div>
+      <div style="margin-top:10px"><span class="tag y" id="rp-sess">0 this session</span></div>
+    </div>
+    <div class="cell c-all">
+      <div class="k">All videos</div>
+      <div class="num s" id="rp-all">0</div>
+      <div class="sub" id="rp-all-sub">loops</div>
+    </div>
+
+    <div class="cell c-loop">
+      <div class="k">Loop</div>
+      <div class="seg"><button id="rp-whole" class="on">Whole video</button><button id="rp-part">Part (A–B)</button><button id="rp-list" title="Play a playlist in order, then from the top">Playlist</button></div>
+      <div class="sub" id="rp-listnote" style="margin-top:10px" hidden></div>
+      <div class="ab">
+        <div><span class="k">A</span><input id="rp-a" value="0:00" inputmode="numeric" aria-label="Loop start"><button data-set="a">set to now</button></div>
+        <div><span class="k">B</span><input id="rp-b" value="" placeholder="end" inputmode="numeric" aria-label="Loop end"><button data-set="b">set to now</button></div>
+      </div>
+      <div class="sub" style="margin-top:8px">A loop counts when the video reaches its end, or B in part mode. Dragging back to the start does not count.</div>
+    </div>
+    <div class="cell c-recent">
+      <div class="tabs" role="tablist"><button class="on" data-tab="recent">Recent</button><button data-tab="lists">Playlists</button></div>
+      <div id="rp-lists" hidden></div>
+      <ul class="list" id="rp-recent"><li style="cursor:default"><span></span><small>Nothing looped yet.</small><span></span></li></ul>
+    </div>
+  </div>
+</div>
+
+<script data-page="repeat">
+"use strict";
+const $ = id => document.getElementById(id);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } },
+};
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
+const fmtN = n => Number(n || 0).toLocaleString("en-US");
+const fmtT = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
+  return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(x).padStart(2, "0"); };
+const parseT = v => { v = String(v || "").trim(); if (!v) return null;
+  if (/^\d+(\.\d+)?$/.test(v)) return Number(v);
+  const p = v.split(":").map(Number); if (p.some(isNaN) || p.length > 3) return null;
+  return p.reduce((a, b) => a * 60 + b, 0); };
+const day = iso => iso ? new Date(iso).toLocaleDateString("en-GB", {day: "numeric", month: "short"}) : "";
+
+/* ---- theme ---- */
+const mq = matchMedia("(prefers-color-scheme: dark)");
+document.documentElement.dataset.theme = store.get("msRepeatTheme", mq.matches ? "dark" : "light");
+$("rp-theme").onclick = () => {
+  const t = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = t; store.set("msRepeatTheme", t);
+};
+
+/* ---- links: youtu.be, watch?v=, shorts, embed, live, music; keeps t= ---- */
+function parseLink(s) {
+  s = s.trim();
+  if (/^[A-Za-z0-9_-]{11}$/.test(s)) return {id: s, t: 0};
+  let u; try { u = new URL(/^https?:/i.test(s) ? s : "https://" + s); } catch (e) { return null; }
+  const host = u.hostname.replace(/^(www|m|music)\./, "");
+  let id = null;
+  if (host === "youtu.be") id = u.pathname.slice(1, 12);
+  else if (host === "youtube.com" || host === "youtube-nocookie.com") {
+    id = u.searchParams.get("v") || (u.pathname.match(/^\/(?:shorts|embed|live|v)\/([A-Za-z0-9_-]{11})/) || [])[1];
+  }
+  if (!id || !/^[A-Za-z0-9_-]{11}$/.test(id)) return null;
+  const tr = u.searchParams.get("t") || u.searchParams.get("start") || "";
+  const m = tr.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/);
+  const t = m ? (+m[1] || 0) * 3600 + (+m[2] || 0) * 60 + (+m[3] || 0) : 0;
+  return {id, t};
+}
+
+/* ---- counts: server numbers + loops still waiting to be sent ---- */
+let server = {videos: [], total: 0};
+let pending = store.get("msRepeatPending", {});     // id -> {n, title, channel}
+const session = {};                                   // id -> loops since this page opened
+let cur = null;                                       // {id, title, channel}
+let locked = false;
+
+const srvRow = id => server.videos.find(v => v.id === id);
+const pendN = id => (pending[id] && pending[id].n) || 0;
+const lifeOf = id => ((srvRow(id) || {}).count || 0) + pendN(id);
+const totalAll = () => server.total + Object.values(pending).reduce((a, p) => a + (p.n || 0), 0);
+
+function renderCounts() {
+  const id = cur && cur.id, life = id ? lifeOf(id) : 0, row = id && srvRow(id);
+  $("rp-life").textContent = $("rp-c-life").textContent = fmtN(life);
+  $("rp-life-sub").textContent = row && row.first ? `loops since ${day(row.first)}` : "loops";
+  $("rp-sess").textContent = `${fmtN(id ? session[id] || 0 : 0)} this session`;
+  $("rp-all").textContent = $("rp-c-all").textContent = fmtN(totalAll());
+  const ids = new Set(server.videos.map(v => v.id).concat(Object.keys(pending)));
+  $("rp-all-sub").textContent = `loops across ${ids.size} video${ids.size === 1 ? "" : "s"}`;
+  if (cur) $("rp-sub").textContent = [cur.channel, `${fmtN(session[id] || 0)} loops this session`].filter(Boolean).join(" · ");
+  renderRecent();
+}
+
+function renderRecent() {
+  if (!$("rp-lists").hidden && !$("rp-lists").querySelector(".dragging")) renderLists();   // counts and "now" in an open playlist
+  const rows = server.videos.slice();
+  for (const [id, p] of Object.entries(pending)) if (!srvRow(id)) rows.unshift({id, title: p.title, channel: p.channel, count: 0});
+  if (!rows.length) {   // also after deleting the last one: never leave stale rows behind
+    $("rp-recent").innerHTML = `<li style="cursor:default"><span></span><small>Nothing looped yet.</small><span></span></li>`;
+    return;
+  }
+  $("rp-recent").innerHTML = rows.slice(0, 8).map(v =>
+    `<li data-id="${esc(v.id)}"><div class="th" style="background-image:url('https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg')"></div>` +
+    `<div><b title="${esc(v.title || v.id)}">${esc(v.title || v.id)}</b><small>${esc([v.channel, v.last ? day(v.last) : "now"].filter(Boolean).join(" · "))}</small></div>` +
+    `<span class="n">${fmtN((v.count || 0) + pendN(v.id))}</span>` +
+    `<button class="add" data-add="${esc(v.id)}" title="Add to a playlist" aria-label="Add to a playlist"><svg class="i"><use href="#i-plus"/></svg></button>` +
+    `<button class="del" data-del="${esc(v.id)}" title="Remove from Recent, and its loops from the total" aria-label="Remove">&#215;</button></li>`).join("");
+}
+$("rp-recent").onclick = e => {
+  const del = e.target.closest("[data-del]");
+  if (del) { removeVideo(del.dataset.del); return; }
+  const add = e.target.closest("[data-add]");
+  if (add) { const v = srvRow(add.dataset.add) || {id: add.dataset.add}; addMenu(add, {id: v.id, title: v.title, channel: v.channel}); return; }
+  const li = e.target.closest("li[data-id]"); if (!li) return;
+  const v = srvRow(li.dataset.id) || {}; play({id: li.dataset.id, title: v.title, channel: v.channel}); };
+
+/* delete (Monkey, 2026-10-07): the video leaves Recent and its loops leave the
+   total. Undo for 8 s puts it back exactly; after that it is gone. */
+let undoTimer = null;
+async function removeVideo(id) {
+  const row = srvRow(id) || {id, count: 0};
+  const entry = Object.assign({}, row, {count: (row.count || 0) + pendN(id)});
+  editPending(q => delete q[id]);              // queued loops go with it
+  try {
+    const r = await api("/api/repeat-delete", {method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({id})});
+    if (!r.ok) throw new Error("the app refused");
+    server = await r.json();
+  } catch (e) { showMsg(`Couldn't remove it: ${esc(e.message)}`, true); return; }
+  renderCounts();
+  showMsg(`Removed <b>${esc(entry.title || id)}</b> (${fmtN(entry.count)} loop${entry.count === 1 ? "" : "s"}). <a href="#" id="rp-undo">Undo</a>`, false);
+  $("rp-undo").onclick = async ev => {
+    ev.preventDefault(); clearTimeout(undoTimer);
+    const r = await api("/api/repeat-restore", {method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({entry})});
+    if (r.ok) { server = await r.json(); renderCounts(); showMsg("", false); }
+    else showMsg("Undo failed.", true);
+  };
+  clearTimeout(undoTimer);
+  undoTimer = setTimeout(() => { if ($("rp-undo")) showMsg("", false); }, 8000);
+}
+
+/* every call carries the secret the app wrote into this page (security
+   review 2026-10-08): the app answers no one else, YouTube's frame included */
+const APP_TOKEN = (document.querySelector("meta[name=app-token]") || {}).content || "";
+async function api(path, opts) {
+  opts = Object.assign({cache: "no-store"}, opts || {});
+  opts.headers = Object.assign({}, opts.headers || {}, {"X-App-Token": APP_TOKEN});
+  const r = await fetch(path, opts);
+  if (r.status === 403) { showMsg("The app refused this page's request. Close On repeat and open it again.", true); throw new Error("locked"); }
+  return r;
+}
+
+async function loadCounts() {
+  try {
+    const r = await api("/api/repeat");
+    if (r.ok) { server = await r.json(); renderCounts(); renderKeyState(); }
+  } catch (e) { /* lock notice already shown, or offline: pending keeps the loops */ }
+}
+
+/* ---- the YouTube search key (the app stores it; the page only ever learns
+   whether one is set: server.search) ---- */
+/* one button, two jobs: "Play" for a link, "Search" for words (with a key).
+   Without a key, words still say Play: pressing it explains what's missing. */
+function renderGo() {
+  const v = $("rp-q").value.trim();
+  $("rp-go").textContent = v && !parseLink(v) && server.search ? "Search" : "Play";
+}
+$("rp-q").addEventListener("input", renderGo);
+function renderKeyState() {
+  const on = !!server.search;
+  renderGo();
+  $("rp-q").placeholder = on ? "Paste a YouTube link, or search" : "Paste a YouTube link (add a search key to search by name)";
+  $("rp-keyremove").hidden = !on;
+  $("rp-keystate").innerHTML = on
+    ? `<span class="ok">A key is saved: search by name works.</span> Paste a new one to replace it, or remove it.`
+    : "Pasting links always works. To also search by name, add a free YouTube Data API key (about 5 minutes, once).";
+}
+function openKeys() { $("rp-keys").hidden = false; showMsg("", false); $("rp-key").focus(); }
+$("rp-keybtn").onclick = () => ($("rp-keys").hidden ? openKeys() : ($("rp-keys").hidden = true));
+$("rp-keyclose").onclick = () => { $("rp-keys").hidden = true; };
+async function saveKey(key) {
+  $("rp-keystate").textContent = key ? "Checking the key with Google…" : "Removing…";
+  try {
+    const r = await api("/api/settings", {method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ytKey: key})});
+    const d = await r.json();
+    if (!r.ok) { $("rp-keystate").innerHTML = `<span class="bad">${esc(d.error || "That didn't work.")}</span>`; return; }
+    server.search = d.search; $("rp-key").value = ""; renderKeyState();
+    if (d.search) $("rp-keystate").innerHTML = `<span class="ok">Key checked and saved. Search by name now works.</span>`;
+  } catch (e) { $("rp-keystate").innerHTML = `<span class="bad">Couldn't save the key: ${esc(e.message)}</span>`; }
+}
+$("rp-keyform").onsubmit = e => { e.preventDefault(); const k = $("rp-key").value.trim(); if (k) saveKey(k); };
+$("rp-keyremove").onclick = () => saveKey("");
+
+/* the queue is shared with the pop-out window (same origin, same storage), so
+   every change re-reads it first, and only one page sends: the tab stops
+   sending while its pop-out is open */
+let flushing = false, popped = null;
+function editPending(fn) { pending = store.get("msRepeatPending", {}); fn(pending); store.set("msRepeatPending", pending); }
+async function flush() {
+  if (flushing || locked || popped) return;
+  flushing = true;
+  try {
+    pending = store.get("msRepeatPending", {});
+    for (const [id, p] of Object.entries(pending)) {
+      const n = p.n;
+      if (!n) { editPending(q => delete q[id]); continue; }
+      const r = await api("/api/repeat-count", {method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id, n, title: p.title || "", channel: p.channel || ""})});
+      if (!r.ok) break;
+      server = await r.json();
+      // loops that landed while this was in flight stay queued
+      editPending(q => { if (q[id]) { q[id].n -= n; if (q[id].n <= 0) delete q[id]; } });
+    }
+  } catch (e) { /* NAS unreachable: try again on the next loop or tick */ }
+  flushing = false;
+  renderCounts();
+}
+setInterval(() => { if (Object.keys(store.get("msRepeatPending", {})).length) flush(); }, 60000);
+
+function loopDone() {
+  if (!cur) return;
+  const id = cur.id;
+  session[id] = (session[id] || 0) + 1;
+  editPending(q => {
+    const p = q[id] || (q[id] = {n: 0});
+    p.n += 1; p.title = cur.title || p.title || ""; p.channel = cur.channel || p.channel || "";
+  });
+  renderCounts();
+  flush();
+}
+
+/* ---- A-B ---- */
+let abAll = store.get("msRepeatAB", {});              // id -> {on, a, b}
+const ab = () => (cur && abAll[cur.id]) || {on: false, a: 0, b: null};
+function saveAB(patch) {
+  if (!cur) return;
+  abAll[cur.id] = Object.assign(ab(), patch); store.set("msRepeatAB", abAll); renderAB();
+}
+function renderAB() {
+  const s = ab(), L = listOn();
+  $("rp-whole").classList.toggle("on", !L && !s.on); $("rp-part").classList.toggle("on", !L && s.on);
+  $("rp-list").classList.toggle("on", L);
+  $("rp-a").value = fmtT(s.a || 0); $("rp-b").value = s.b != null ? fmtT(s.b) : "";
+}
+// choosing Whole video or Part leaves Playlist mode (the list stays ready to resume)
+$("rp-whole").onclick = () => { if (q) { q.on = false; saveQ(); } saveAB({on: false}); };
+$("rp-part").onclick = () => { if (q) { q.on = false; saveQ(); } saveAB({on: true}); };
+$("rp-a").onchange = () => { const t = parseT($("rp-a").value); saveAB({a: t == null ? 0 : t}); };
+$("rp-b").onchange = () => { const t = parseT($("rp-b").value); saveAB({b: t}); };
+document.querySelectorAll("[data-set]").forEach(b => b.onclick = () => {
+  if (player && player.getCurrentTime) saveAB({[b.dataset.set]: Math.floor(player.getCurrentTime())});
+});
+const loopStart = () => (!listOn() && ab().on ? ab().a || 0 : 0);
+
+/* ---- the player (YouTube IFrame API; nothing is ever drawn over it) ---- */
+let player = null, ready = false, queued = null, lastJump = 0;
+const ytScript = document.createElement("script");
+ytScript.src = "https://www.youtube.com/iframe_api";
+document.head.appendChild(ytScript);
+window.onYouTubeIframeAPIReady = () => {
+  player = new YT.Player("player", {
+    width: "100%", height: "100%",
+    playerVars: {playsinline: 1, rel: 0, origin: location.origin},
+    events: {
+      onReady: () => { ready = true; if (queued) { const q = queued; queued = null; load(q.v, q.t, q.auto); } },
+      onStateChange: onState,
+      onError: e => {
+        const why = {2: "That video id is not valid.", 5: "The player could not play this video.",
+          100: "This video is private or removed.", 101: "Its owner does not allow playing it outside YouTube.",
+          150: "Its owner does not allow playing it outside YouTube.", 153: "YouTube refused the embed (no referrer)."}[e.data] || `Player error ${e.data}.`;
+        showMsg(`${why} <a href="https://www.youtube.com/watch?v=${esc(cur && cur.id)}" target="_blank" rel="noopener">Open on YouTube</a>`, true);
+        setState("error", "n");
+      },
+    },
+  });
+};
+
+function onState(e) {
+  const S = YT.PlayerState;
+  if (e.data === S.ENDED) {
+    loopDone();                              // the song played to its end: one listen
+    lastJump = Date.now();
+    if (listOn()) nextSong();                // playlist: on to the next, after the last back to the first
+    else { player.seekTo(loopStart(), true); player.playVideo(); }
+  }
+  if (e.data === S.PLAYING) setState("looping", "g");
+  else if (e.data === S.PAUSED) setState("paused", "n");
+  else if (e.data === S.BUFFERING) setState("loading", "n");
+  if (popped && e.data !== S.PLAYING) setState("popped out", "n");
+  $("rp-pp").innerHTML = `<svg class="i"><use href="#i-${e.data === S.PLAYING ? "pause" : "play"}"/></svg>`;
+}
+
+/* part mode: background tabs slow timers to about once a second, so B can
+   overshoot by up to a second there; still one loop per pass */
+setInterval(() => {
+  if (!ready || !cur || listOn() || !ab().on || player.getPlayerState() !== YT.PlayerState.PLAYING) return;
+  const s = ab(), t = player.getCurrentTime();
+  if (s.b != null && s.b > (s.a || 0) && t >= s.b && Date.now() - lastJump > 800) {
+    loopDone(); lastJump = Date.now(); player.seekTo(s.a || 0, true);
+  }
+}, 250);
+
+function setState(text, cls) { const el = $("rp-state"); el.textContent = text; el.className = "tag " + cls; }
+function showMsg(html, bad) { const m = $("rp-msg"); m.innerHTML = html; m.className = "msg" + (bad ? " bad" : ""); m.hidden = !html; }
+
+function load(v, t, auto) {
+  if (!ready) { queued = {v, t, auto}; return; }
+  const start = t || loopStart();
+  if (auto) player.loadVideoById({videoId: v.id, startSeconds: start});
+  else player.cueVideoById({videoId: v.id, startSeconds: start});
+}
+
+/* long titles end in "…"; hovering shows the whole one (Monkey, 2026-10-08) */
+function showTitle(text) { const el = $("rp-title"); el.textContent = text; el.title = text; }
+
+async function play(v, t, auto = true, fromList = false) {
+  // picking one video yourself (paste, Recent, search) leaves Playlist mode
+  if (!fromList && listOn()) { q.on = false; saveQ(); }
+  cur = {id: v.id, title: v.title || "", channel: v.channel || ""};
+  showMsg("", false);
+  $("rp-empty").hidden = true; $("rp-pp").disabled = false;
+  $("rp-yt").hidden = false; $("rp-yt").href = `https://www.youtube.com/watch?v=${v.id}`;
+  showTitle(cur.title || "Loading title…");
+  if (qs0().get("mini") !== "1") history.replaceState(null, "", `/repeat?v=${v.id}${APP ? "&app=1" : ""}`);
+  renderAB(); renderCounts(); setState(auto ? "loading" : "ready", "n");
+  load(cur, t, auto);
+  if (!cur.title) {
+    try {
+      const r = await api(`/api/ytinfo?id=${v.id}`);
+      if (r.ok && cur.id === v.id) { const d = await r.json(); cur.title = d.title; cur.channel = d.channel; }
+    } catch (e) { /* the title is cosmetic */ }
+    if (cur.id === v.id) { showTitle(cur.title || v.id); renderCounts(); }
+  }
+  document.title = `↻ ${cur.title || "On repeat"}`;
+  if (auto && cur.id === v.id) remember(cur);
+}
+
+/* every pick is remembered on the NAS, so /repeat opens on it next time, on any
+   device, and it is in Recent before it has looped once; this browser keeps a
+   copy in case the NAS is unreachable (2026-10-07) */
+async function remember(v) {
+  store.set("msRepeatLast", {id: v.id, title: v.title, channel: v.channel});
+  try {
+    const r = await api("/api/repeat-played", {method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({id: v.id, title: v.title || "", channel: v.channel || ""})});
+    if (r.ok) { server = await r.json(); renderCounts(); }
+  } catch (e) { /* offline or locked: the local copy still reopens it here */ }
+}
+
+$("rp-pp").onclick = () => {
+  if (!ready || !cur) return;
+  player.getPlayerState() === YT.PlayerState.PLAYING ? player.pauseVideo() : player.playVideo();
+};
+
+/* ---- search ---- */
+let lastResults = [];
+$("rp-form").onsubmit = async e => {
+  e.preventDefault();
+  const q = $("rp-q").value.trim();
+  if (!q) return;
+  const link = parseLink(q);
+  if (link) { $("rp-results").hidden = true; $("rp-q").value = ""; play({id: link.id}, link.t); return; }
+  if (q.length < 2) return;
+  showMsg("Searching…", false);
+  try {
+    const r = await api(`/api/ytsearch?q=${encodeURIComponent(q)}`);
+    const d = await r.json();
+    if (d.error === "nokey") {
+      showMsg(`Searching by name needs a free YouTube key of your own. <a href="#" id="rp-addkey">Add one</a> (about 5 minutes, once). Pasting a link works without it.`, true);
+      $("rp-addkey").onclick = e => { e.preventDefault(); openKeys(); };
+      return;
+    }
+    if (d.error === "quota") return showMsg("Today's YouTube search quota is used up. It resets around 09:00 Paris time. Pasting a link still works.", true);
+    if (d.error) return showMsg(`Search failed: ${esc(d.error)}`, true);
+    showMsg("", false);
+    lastResults = d.results || [];
+    $("rp-res").innerHTML = lastResults.length ? lastResults.map((v, i) =>
+      `<li data-i="${i}"><div class="th" style="background-image:url('https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg')"></div>` +
+      `<div><b title="${esc(v.title)}">${esc(v.title)}</b><small>${esc([v.channel, v.duration, v.embeddable === false ? "can't play outside YouTube" : ""].filter(Boolean).join(" · "))}</small></div>` +
+      `<span class="n">${lifeOf(v.id) ? fmtN(lifeOf(v.id)) : ""}</span>` +
+      `<button class="add" data-add="${esc(v.id)}" title="Add to a playlist" aria-label="Add to a playlist"><svg class="i"><use href="#i-plus"/></svg></button></li>`).join("")
+      : `<li style="cursor:default"><span></span><small>No results for that search.</small><span></span></li>`;
+    $("rp-results").hidden = false;
+  } catch (err) {
+    if (err.message !== "locked") showMsg("Search failed: the app did not answer.", true);
+  }
+};
+$("rp-res").onclick = e => {
+  const add = e.target.closest("[data-add]");
+  if (add) { const v = lastResults.find(x => x.id === add.dataset.add); if (v) addMenu(add, v); return; }
+  const li = e.target.closest("li[data-i]"); if (!li) return;
+  const v = lastResults[+li.dataset.i];
+  $("rp-results").hidden = true; $("rp-q").value = "";
+  play(v);
+};
+
+/* ======================================================================
+   Playlists (P2, Monkey's pick 2026-10-08, mockups/playlist-options.html).
+   The app keeps the lists (Playlists.cs); this page keeps what is playing:
+   q = {pid, order: [video ids], idx, shuffle, on}. "on" is the Loop card's
+   Playlist mode: a song that reaches its end counts (as always) and the next
+   one starts; after the last, back to the first. Skipping never counts.
+   ====================================================================== */
+let lists = [];
+let q = store.get("msRepeatQueue", null);
+let listView = null;                        // null = index; else the open playlist's id
+const listOn = () => !!(q && q.on && q.order && q.order.length);
+const listById = pid => lists.find(p => p.id === pid);
+function saveQ() { store.set("msRepeatQueue", q); renderQueue(); }
+function post(path, body) {
+  return api(path, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)})
+    .then(async r => { const d = await r.json().catch(() => ({})); if (!r.ok) throw new Error(d.error || "the app refused"); return d; });
+}
+async function loadLists() {
+  try { const r = await api("/api/playlists"); if (r.ok) lists = (await r.json()).playlists || []; } catch (e) { /* shown empty */ }
+  syncQueue(); renderLists();
+}
+function setLists(d) { lists = d.playlists || []; syncQueue(); renderLists(); }
+
+/* keep the queue in step with its playlist after a reorder, add or remove */
+function syncQueue() {
+  if (!q) return;
+  const p = listById(q.pid);
+  if (!p) { q = null; store.set("msRepeatQueue", null); renderQueue(); return; }
+  const ids = p.songs.map(s => s.id), cid = q.order[q.idx];
+  if (q.shuffle) q.order = q.order.filter(id => ids.includes(id)).concat(ids.filter(id => !q.order.includes(id)));
+  else q.order = ids;
+  const at = q.order.indexOf(cid);
+  q.idx = at >= 0 ? at : Math.min(q.idx, Math.max(0, q.order.length - 1));
+  if (!q.order.length) q.on = false;
+  saveQ();
+}
+function shuffled(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+function playList(pid, startId, shuffle) {
+  const p = listById(pid); if (!p || !p.songs.length) return;
+  let order = p.songs.map(s => s.id);
+  if (shuffle) { order = shuffled(order); if (startId) order = [startId].concat(order.filter(x => x !== startId)); }
+  q = {pid, order, idx: startId ? Math.max(0, order.indexOf(startId)) : 0, shuffle: !!shuffle, on: true};
+  saveQ(); playIdx(q.idx, true);
+}
+function playIdx(i, auto) {
+  if (!q || !q.order.length) return;
+  q.idx = (i + q.order.length) % q.order.length;
+  saveQ();
+  const id = q.order[q.idx], s = (listById(q.pid) || {songs: []}).songs.find(x => x.id === id) || {id};
+  play({id, title: s.title, channel: s.channel}, 0, auto, true);
+}
+const nextSong = () => playIdx(q.idx + 1, true);
+const prevSong = () => (ready && player.getCurrentTime() > 4 ? player.seekTo(0, true) : playIdx(q.idx - 1, true));
+$("rp-next").onclick = () => listOn() && nextSong();
+$("rp-prev").onclick = () => listOn() && prevSong();
+function setListOn(on) {
+  if (on && !q) { showTab("lists"); showMsg("Pick a playlist and press ▶ to play it.", false); return; }
+  if (q) { q.on = on; saveQ(); }
+  renderAB(); renderLists();
+}
+$("rp-list").onclick = () => { setListOn(true); if (listOn() && cur && q.order[q.idx] !== cur.id) playIdx(q.idx, true); };
+
+function renderQueue() {
+  const on = listOn(), p = on && listById(q.pid);
+  $("rp-prev").hidden = $("rp-next").hidden = !on;
+  document.body.classList.toggle("queue", on);
+  $("rp-pos").hidden = !on;
+  if (on) $("rp-pos").textContent = `${q.idx + 1} / ${q.order.length}`;
+  $("rp-listnote").hidden = !on;
+  if (on && p) $("rp-listnote").innerHTML = `Playing <b>${esc(p.name)}</b> · song ${q.idx + 1} of ${q.order.length}${q.shuffle ? " · shuffled" : ""} · then back to the first.`;
+  if (typeof reportHeight === "function") reportHeight();
+}
+
+/* ---- the Recent / Playlists tabs ---- */
+function showTab(t) {
+  document.querySelectorAll(".c-recent .tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
+  $("rp-recent").hidden = t !== "recent";
+  $("rp-lists").hidden = t !== "lists";
+  store.set("msRepeatTab", t);
+  if (t === "lists") renderLists();
+}
+document.querySelectorAll(".c-recent .tabs button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
+
+const loopsOf = p => p.songs.reduce((a, s) => a + lifeOf(s.id), 0);
+function renderLists() {
+  const box = $("rp-lists");
+  if (box.hidden) return;
+  const p = listView && listById(listView);
+  if (!p) {
+    listView = null;
+    box.innerHTML = (lists.length ? lists.map(p =>
+      `<div class="plrow" data-open="${esc(p.id)}"><b title="${esc(p.name)}">${esc(p.name)}</b>` +
+      `<button class="btn q sm" data-play="${esc(p.id)}"${p.songs.length ? "" : " disabled"}><svg class="i"><use href="#i-play"/></svg>Play</button>` +
+      `<small>${p.songs.length} song${p.songs.length === 1 ? "" : "s"} · ${fmtN(loopsOf(p))} loops${listOn() && q.pid === p.id ? " · playing" : ""}</small></div>`).join("")
+      : `<div class="empty-note">No playlists yet. Make one below, then add songs with the <b>+</b> on Recent or search results.</div>`) +
+      `<form class="plnew" id="rp-plnew"><input id="rp-plname" maxlength="60" placeholder="New playlist name"><button class="btn q sm" type="submit"><svg class="i"><use href="#i-plus"/></svg>New playlist</button></form>`;
+    $("rp-plnew").onsubmit = async e => {
+      e.preventDefault();
+      const name = $("rp-plname").value.trim(); if (!name) return;
+      try { setLists(await post("/api/playlist-create", {name})); } catch (err) { showMsg(esc(err.message), true); }
+    };
+    return;
+  }
+  const playingHere = listOn() && q.pid === p.id;
+  box.innerHTML =
+    `<div class="plhead"><button class="back" id="rp-plback">← Playlists</button></div>` +
+    `<div class="plhead"><span class="nm" id="rp-plnm" title="Click to rename">${esc(p.name)}</span>` +
+    `<button class="btn q sm${playingHere && q.shuffle ? " on" : ""}" id="rp-plshuf" title="Play in a random order"${p.songs.length ? "" : " disabled"}><svg class="i"><use href="#i-shuffle"/></svg>Shuffle</button>` +
+    `<button class="btn sm" id="rp-plplay"${p.songs.length ? "" : " disabled"}><svg class="i"><use href="#i-play"/></svg>Play</button></div>` +
+    (p.songs.length ? `<ul class="list" id="rp-pl">` + p.songs.map((s, i) =>
+      `<li data-id="${esc(s.id)}" data-i="${i}" draggable="true" class="${playingHere && cur && cur.id === s.id ? "now" : ""}">` +
+      `<span class="drag" title="Drag to reorder">⋮⋮</span>` +
+      `<div class="th" style="background-image:url('https://i.ytimg.com/vi/${esc(s.id)}/mqdefault.jpg')"></div>` +
+      `<div><b title="${esc(s.title || s.id)}">${esc(s.title || s.id)}</b><small>${esc(s.channel || "")}</small></div>` +
+      `<span class="n">${fmtN(lifeOf(s.id))}</span>` +
+      `<button class="del" data-rm="${esc(s.id)}" title="Remove from this playlist" aria-label="Remove">&#215;</button></li>`).join("") + `</ul>`
+      : `<div class="empty-note">Empty. Add songs with the <b>+</b> on Recent or search results.</div>`) +
+    `<div style="margin-top:12px"><button class="btn q sm" id="rp-pldel">Delete playlist</button></div>`;
+  $("rp-plback").onclick = () => { listView = null; renderLists(); };
+  $("rp-plplay").onclick = () => playList(p.id, null, false);
+  $("rp-plshuf").onclick = () => playList(p.id, null, true);
+  $("rp-plnm").onclick = () => renameList(p);
+  $("rp-pldel").onclick = () => deleteList(p);
+  const ul = $("rp-pl");
+  if (ul) {
+    ul.onclick = e => {
+      const rm = e.target.closest("[data-rm]");
+      if (rm) { removeSong(p, rm.dataset.rm); return; }
+      const li = e.target.closest("li[data-id]");
+      if (li && !e.target.closest(".drag")) playList(p.id, li.dataset.id, playingHere && q.shuffle);
+    };
+    dragToReorder(ul, p);
+  }
+}
+$("rp-lists").addEventListener("click", e => {
+  const pl = e.target.closest("[data-play]");
+  if (pl) { e.stopPropagation(); playList(pl.dataset.play, null, false); return; }
+  const op = e.target.closest("[data-open]");
+  if (op && !listView) { listView = op.dataset.open; renderLists(); }
+});
+
+function renameList(p) {
+  const nm = $("rp-plnm");
+  const inp = document.createElement("input"); inp.value = p.name; inp.maxLength = 60;
+  nm.replaceWith(inp); inp.focus(); inp.select();
+  let done = false;
+  const finish = async ok => {
+    if (done) return; done = true;
+    const name = inp.value.trim();
+    if (ok && name && name !== p.name) { try { setLists(await post("/api/playlist-rename", {pid: p.id, name})); return; } catch (err) { showMsg(esc(err.message), true); } }
+    renderLists();
+  };
+  inp.onkeydown = e => { if (e.key === "Enter") finish(true); else if (e.key === "Escape") finish(false); };
+  inp.onblur = () => finish(true);
+}
+
+/* one Undo message at a time, for 8 s, like removing from Recent */
+function offerUndo(html, undo) {
+  showMsg(`${html} <a href="#" id="rp-undo">Undo</a>`, false);
+  $("rp-undo").onclick = async ev => { ev.preventDefault(); clearTimeout(undoTimer); try { await undo(); showMsg("", false); } catch (err) { showMsg("Undo failed.", true); } };
+  clearTimeout(undoTimer);
+  undoTimer = setTimeout(() => { if ($("rp-undo")) showMsg("", false); }, 8000);
+}
+async function removeSong(p, id) {
+  const index = p.songs.findIndex(s => s.id === id), song = p.songs[index];
+  try { setLists(await post("/api/playlist-remove", {pid: p.id, id})); } catch (err) { showMsg(esc(err.message), true); return; }
+  offerUndo(`Removed <b>${esc(song.title || id)}</b> from ${esc(p.name)}.`,
+    async () => setLists(await post("/api/playlist-insert", {pid: p.id, song, index})));
+}
+async function deleteList(p) {
+  const index = lists.indexOf(p), copy = JSON.parse(JSON.stringify(p));
+  try { setLists(await post("/api/playlist-delete", {pid: p.id})); } catch (err) { showMsg(esc(err.message), true); return; }
+  listView = null; renderLists();
+  offerUndo(`Deleted the playlist <b>${esc(p.name)}</b> (${p.songs.length} songs). Your loop counts are unchanged.`,
+    async () => { setLists(await post("/api/playlist-restore", {playlist: copy, index})); });
+}
+
+/* drag a row by anywhere (the grip shows where); drop above or below another */
+function dragToReorder(ul, p) {
+  let from = null;
+  ul.addEventListener("dragstart", e => { const li = e.target.closest("li[data-id]"); if (!li) return; from = li; li.classList.add("dragging"); e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", li.dataset.id); });
+  ul.addEventListener("dragend", () => { if (from) from.classList.remove("dragging"); from = null; ul.querySelectorAll("li").forEach(l => l.classList.remove("over-top", "over-bottom")); });
+  ul.addEventListener("dragover", e => {
+    const li = e.target.closest("li[data-id]"); if (!from || !li || li === from) return;
+    e.preventDefault();
+    const below = e.clientY > li.getBoundingClientRect().top + li.offsetHeight / 2;
+    ul.querySelectorAll("li").forEach(l => l.classList.remove("over-top", "over-bottom"));
+    li.classList.add(below ? "over-bottom" : "over-top");
+  });
+  ul.addEventListener("drop", async e => {
+    const li = e.target.closest("li[data-id]"); if (!from || !li || li === from) return;
+    e.preventDefault();
+    const ids = p.songs.map(s => s.id), moving = from.dataset.id;
+    const below = e.clientY > li.getBoundingClientRect().top + li.offsetHeight / 2;
+    ids.splice(ids.indexOf(moving), 1);
+    ids.splice(ids.indexOf(li.dataset.id) + (below ? 1 : 0), 0, moving);
+    try { setLists(await post("/api/playlist-order", {pid: p.id, ids})); } catch (err) { showMsg(esc(err.message), true); loadLists(); }
+  });
+}
+
+/* ---- "Add to…" from a Recent or search row ---- */
+function closeMenu() { $("rp-menu").hidden = true; }
+addEventListener("mousedown", e => { if (!$("rp-menu").hidden && !e.target.closest("#rp-menu") && !e.target.closest("[data-add]")) closeMenu(); });
+addEventListener("keydown", e => { if (e.key === "Escape") closeMenu(); });
+function addMenu(btn, v) {
+  const m = $("rp-menu");
+  m.innerHTML = `<div class="mh">Add to…</div>` +
+    lists.map(p => `<button data-to="${esc(p.id)}" title="${esc(p.name)}">${esc(p.name)}</button>`).join("") +
+    `<form id="rp-mnew"><input id="rp-mname" maxlength="60" placeholder="New playlist"><button class="btn q sm" type="submit">Add</button></form>`;
+  const r = btn.getBoundingClientRect();
+  m.hidden = false;
+  m.style.left = Math.max(8, Math.min(innerWidth - m.offsetWidth - 8, r.right - m.offsetWidth)) + "px";
+  m.style.top = (r.bottom + 4 + m.offsetHeight > innerHeight ? Math.max(8, r.top - m.offsetHeight - 4) : r.bottom + 4) + "px";
+  const add = async pid => {
+    closeMenu();
+    try {
+      const d = await post("/api/playlist-add", {pid, id: v.id, title: v.title || "", channel: v.channel || ""});
+      setLists(d);
+      const p = listById(pid);
+      showMsg(d.already ? `Already in <b>${esc(p.name)}</b>.` : `Added to <b>${esc(p.name)}</b>.`, false);
+    } catch (err) { showMsg(esc(err.message), true); }
+  };
+  m.querySelectorAll("[data-to]").forEach(b => b.onclick = () => add(b.dataset.to));
+  $("rp-mnew").onsubmit = async e => {
+    e.preventDefault();
+    const name = $("rp-mname").value.trim(); if (!name) return;
+    try { const d = await post("/api/playlist-create", {name}); setLists(d); await add(d.playlists[d.playlists.length - 1].id); }
+    catch (err) { showMsg(esc(err.message), true); }
+  };
+  if (!lists.length) $("rp-mname").focus();
+}
+
+/* ---- compact mode: the player cell floats and drags; position kept per browser ---- */
+const card = $("card");
+function placeCard(x, y) {
+  const w = card.offsetWidth || 320, h = card.offsetHeight || 330;
+  x = Math.min(Math.max(x, 0), Math.max(0, innerWidth - w));
+  y = Math.min(Math.max(y, 0), Math.max(0, innerHeight - h));
+  card.style.setProperty("--x", x + "px"); card.style.setProperty("--y", y + "px");
+  return {x, y};
+}
+function setCompact(on) {
+  document.body.classList.toggle("compact", on);
+  store.set("msRepeatCompact", on);
+  if (on) { const p = store.get("msRepeatPos", {x: 24, y: 24}); placeCard(p.x, p.y); }
+}
+$("rp-expand").onclick = () => setCompact(false);
+
+/* ---- pop out: an always-on-top window you move anywhere on the desktop, like
+   YouTube's picture-in-picture (Document Picture-in-Picture: Chrome/Edge 116+,
+   Firefox 151+). That window cannot load a URL and YouTube refuses embeds with
+   no referrer, so it holds one iframe of this page in ?mini=1 mode, which
+   embeds YouTube as a normal page. This tab pauses while it is open; the mini
+   page reports its spot through localStorage so closing it hands back. Where
+   the browser has no Document PiP, the button falls back to the in-tab card. */
+const PIP = "documentPictureInPicture" in window;
+if (!PIP) { $("rp-compact").lastChild.textContent = "Compact"; $("rp-compact").title = "Compact mode"; }
+async function popOut() {
+  console.info("[repeat] pop out clicked", {video: cur && cur.id, open: !!popped});
+  if (!cur) { showMsg("Pick a video first (paste a link or search), then press Pop out.", true); return; }
+  if (popped) { showMsg("The pop-out window is already open. Close it to bring the video back here.", false); return; }
+  let win;
+  try { win = await documentPictureInPicture.requestWindow({width: 340, height: 330}); }
+  catch (e) {
+    // refused: say why, and fall back to the in-tab card
+    console.warn("[repeat] requestWindow refused", e);
+    showMsg(`The browser refused the pop-out window (${esc(e && e.message || e)}). Using the in-tab card instead.`, true);
+    setCompact(true); return;
+  }
+  console.info("[repeat] pop-out window opened", win.innerWidth, win.innerHeight);
+  // Orca's built-in browser (Electron) resolves requestWindow with a 0x0 window
+  // and closes it 1 ms later (measured 2026-10-07), so nothing ever shows.
+  // Listen for the close before any await, and treat an instant close as "this
+  // browser can't pop out".
+  store.set("msRepeatMini", null);            // a report left from an earlier pop-out is not this one
+  const opened = performance.now();
+  let handedOver = false;
+  let done = false;
+  const onClosed = () => {
+    if (done) return;
+    done = true;
+    popped = null;
+    const m = store.get("msRepeatMini", null);
+    if (!m && performance.now() - opened < 1500) {
+      console.warn("[repeat] pop-out window closed instantly; this browser does not show it");
+      if (handedOver && ready) player.playVideo();      // nothing played elsewhere: carry on here
+      setState("paused", "n");
+      setCompact(true);
+      showMsg("This browser closed the pop-out window as soon as it opened (Orca's built-in browser does this). " +
+        "Showing the in-tab card instead. For a window that floats over your desktop, open this page in Chrome or Edge.", true);
+      return;
+    }
+    if (m && m.id) {
+      if (cur && m.id === cur.id) {
+        session[cur.id] = Math.max(session[cur.id] || 0, m.s || 0);
+        if (ready) player.seekTo(m.t || 0, true);
+      } else {
+        play({id: m.id, title: m.title, channel: m.channel}, m.t || 0, false);
+      }
+    }
+    setState("paused", "n");
+    showMsg("", false);
+    loadCounts().then(flush);
+  };
+  win.addEventListener("pagehide", () => setTimeout(onClosed, 200), {once: true});
+  // and in case it closed before that listener was attached
+  setTimeout(() => { if (win.closed) onClosed(); }, 400);
+  popped = win;
+  const wasPlaying = ready && player.getPlayerState() === YT.PlayerState.PLAYING;
+  const t = ready ? Math.floor(player.getCurrentTime() || 0) : 0;
+  if (ready) player.pauseVideo();
+  handedOver = wasPlaying;
+  await flush();                               // send this tab's loops before handing over
+  if (win.closed || done) return;              // onClosed above deals with it
+  win.document.title = "On repeat";
+  win.document.body.style.cssText = "margin:0;background:#000;overflow:hidden";
+  const f = win.document.createElement("iframe");
+  f.src = `${location.origin}/repeat?mini=1&v=${cur.id}&t=${t}&s=${session[cur.id] || 0}`;
+  f.allow = "autoplay; encrypted-media";
+  f.style.cssText = "border:0;display:block;width:100vw;height:100vh";
+  win.document.body.append(f);
+  showMsg("Playing in the pop-out window. Close it to bring the video back here.", false);
+  setState("popped out", "n");
+}
+/* Firefox draws its own title + address bar on this window; no requestWindow
+   option hides it (MDN lists width, height, disallowReturnToOpener,
+   preferInitialWindowPlacement). Monkey tried Firefox's video-only pop-out
+   instead and wants the counters, so Firefox gets this window too (2026-10-07). */
+$("rp-compact").onclick = () => {
+  if (APP) return appMini(true);
+  if (!PIP) return setCompact(true);
+  popOut().catch(e => { console.error("[repeat] pop out failed", e); showMsg(`Pop out failed: ${esc(e && e.message || e)}`, true); });
+};
+let drag = null;
+$("rp-grip").addEventListener("pointerdown", e => {
+  if (e.target.closest("button")) return;
+  const r = card.getBoundingClientRect();
+  drag = {dx: e.clientX - r.left, dy: e.clientY - r.top};
+  $("rp-grip").setPointerCapture(e.pointerId);
+});
+$("rp-grip").addEventListener("pointermove", e => { if (drag) placeCard(e.clientX - drag.dx, e.clientY - drag.dy); });
+$("rp-grip").addEventListener("pointerup", () => {
+  if (!drag) return; drag = null;
+  const s = getComputedStyle(card);
+  store.set("msRepeatPos", {x: parseFloat(s.getPropertyValue("--x")) || 0, y: parseFloat(s.getPropertyValue("--y")) || 0});
+});
+addEventListener("resize", () => { if (document.body.classList.contains("compact")) {
+  const s = getComputedStyle(card); placeCard(parseFloat(s.getPropertyValue("--x")) || 0, parseFloat(s.getPropertyValue("--y")) || 0); } });
+
+/* ---- keys ---- */
+addEventListener("keydown", e => {
+  if (e.target.matches("input, textarea") || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.key === "/") { e.preventDefault(); setCompact(false); if (APP) appMini(false); $("rp-q").focus(); }
+  else if (e.key === "k" || e.key === "K") $("rp-pp").click();
+  else if (e.key === "l" || e.key === "L") saveAB({on: !ab().on});
+  else if (e.key === "Escape" && document.body.classList.contains("compact")) setCompact(false);
+});
+
+/* ---- progress line (mini views; the full page has YouTube's own bar) ---- */
+setInterval(() => {
+  if (!ready || !cur || !document.body.matches(".mini, .compact")) return;
+  const d = player.getDuration ? player.getDuration() : 0, t = player.getCurrentTime ? player.getCurrentTime() : 0;
+  $("rp-prog").firstChild.style.width = d > 0 ? Math.min(100, t / d * 100) + "%" : "0";
+}, 500);
+
+/* ---- desktop app (RepeatDesktop.exe loads /repeat?app=1 in WebView2; repo
+   betemonkey/repeat-desktop). The page decides mini/full, fold and pin and
+   tells the window; the window only resizes, moves and stays on top. One
+   window, one player: nothing to hand over between two players. Monkey's
+   picks (2026-10-07): fold hides the video, ✕ goes back to the full window. ---- */
+const APP = qs0().get("app") === "1" && !!(window.chrome && window.chrome.webview);
+function qs0() { return new URLSearchParams(location.search); }
+const host = m => { try { window.chrome.webview.postMessage(m); } catch (e) { /* not in the app */ } };
+function reportHeight() {
+  if (APP && document.body.classList.contains("mini"))
+    // in device pixels, so the window fits whatever scales the page: the
+    // screen's DPI *and* Windows' text size (117% on Monkey's PC made a
+    // window sized from DPI alone cut the counters off, 2026-10-07)
+    host({cmd: "height", h: Math.ceil(card.getBoundingClientRect().height * devicePixelRatio),
+          w: Math.round(320 * devicePixelRatio)});
+}
+function appMini(on) {
+  document.body.classList.toggle("mini", on);
+  store.set("msRepeatAppMini", on);
+  host({cmd: "mode", mini: on});
+  reportHeight();
+}
+function setFold(on) {
+  document.body.classList.toggle("folded", on);
+  store.set("msRepeatFold", on);
+  $("rp-fold").innerHTML = `<svg class="i"><use href="#i-${on ? "unfold" : "fold"}"/></svg>`;
+  $("rp-fold").title = on ? "Show the video (F)" : "Hide the video (F)";
+  reportHeight();
+}
+function setPin(on) {
+  $("rp-pin").classList.toggle("on", on);
+  store.set("msRepeatPin", on);
+  host({cmd: "pin", on});
+}
+if (APP) {
+  document.body.classList.add("app");
+  $("rp-compact").lastChild.textContent = "Mini";
+  $("rp-fold").onclick = () => setFold(!document.body.classList.contains("folded"));
+  $("rp-pin").onclick = () => setPin(!$("rp-pin").classList.contains("on"));
+  $("rp-full").onclick = () => appMini(false);
+  $("rp-appbar").addEventListener("mousedown", e => {
+    if (e.button === 0 && !e.target.closest("button")) host({cmd: "drag"});
+  });
+  new ResizeObserver(reportHeight).observe(card);
+  // moving the window to a screen with another scale changes devicePixelRatio
+  // but not the card's CSS size, so the ResizeObserver above stays quiet
+  const watchDpr = () => matchMedia(`(resolution: ${devicePixelRatio}dppx)`)
+    .addEventListener("change", () => { reportHeight(); watchDpr(); }, {once: true});
+  watchDpr();
+  addEventListener("keydown", e => {
+    if (e.target.matches("input, textarea") || e.ctrlKey || e.metaKey || e.altKey) return;
+    if ((e.key === "f" || e.key === "F") && document.body.classList.contains("mini")) setFold(!document.body.classList.contains("folded"));
+    else if (e.key === "Escape" && document.body.classList.contains("mini")) appMini(false);
+  });
+  // C1 bars: the window sends 16 levels (0..1) about 30 times a second while
+  // mini shows; they are already smoothed there. All near 0 = nothing playing.
+  const bars = $("rp-bars");
+  for (let i = 0; i < 16; i++) bars.appendChild(document.createElement("span"));
+  window.chrome.webview.addEventListener("message", e => {
+    const m = e.data;
+    if (!m || m.cmd !== "levels" || !Array.isArray(m.v)) return;
+    let loud = 0;
+    m.v.forEach((x, i) => { if (bars.children[i]) bars.children[i].style.height = Math.round(Math.max(.06, x) * 100) + "%"; loud = Math.max(loud, x); });
+    bars.classList.toggle("quiet", loud < .02);
+  });
+  setPin(store.get("msRepeatPin", true));
+  setFold(store.get("msRepeatFold", false));
+  appMini(store.get("msRepeatAppMini", false));
+}
+
+/* ---- A3 (Monkey, 2026-10-08): no scroll bar; the page edges fade where there
+   is more to scroll, and a "more ↓" chip points down. YouTube's embed rules
+   forbid drawing anything over the player, so the fades and the chip stand
+   down whenever they would touch it. ---- */
+(() => {
+  const top = $("rp-fade-top"), bottom = $("rp-fade-bottom"), more = $("rp-more");
+  const hits = (el, edgeTop, edgeBottom) => {
+    const r = document.querySelector("#card .vid").getBoundingClientRect();
+    return r.height > 0 && r.bottom > edgeTop && r.top < edgeBottom;
+  };
+  const update = () => {
+    if (document.body.matches(".mini, .compact")) { top.hidden = bottom.hidden = more.hidden = true; return; }
+    const below = document.documentElement.scrollHeight - scrollY - innerHeight > 4;
+    const clearBottom = !hits(bottom, innerHeight - 56, innerHeight);
+    top.hidden = !(scrollY > 4 && !hits(top, 0, 24));
+    bottom.hidden = !(below && clearBottom);
+    more.hidden = bottom.hidden;
+  };
+  more.onclick = () => scrollBy({top: innerHeight * .8, behavior: "smooth"});
+  addEventListener("scroll", update, {passive: true});
+  addEventListener("resize", update);
+  new ResizeObserver(update).observe(document.body);
+  update();
+})();
+
+/* ---- start: counts, then the video in the address bar (cued, not autoplayed) ---- */
+const qs = new URLSearchParams(location.search);
+const MINI = qs.get("mini") === "1";
+const countsReady = loadCounts();
+showTab(store.get("msRepeatTab", "recent") === "lists" ? "lists" : "recent");
+renderQueue();
+if (startIdEarly()) countsReady.then(loadLists);   // the playlist-resume branch below loads them itself
+function startIdEarly() { return /^[A-Za-z0-9_-]{11}$/.test(new URLSearchParams(location.search).get("v") || ""); }
+countsReady.then(flush);
+const startId = qs.get("v");
+if (MINI) {
+  document.body.classList.add("mini");
+  if (startId && /^[A-Za-z0-9_-]{11}$/.test(startId)) {
+    session[startId] = Math.max(0, parseInt(qs.get("s"), 10) || 0);
+    // the click that opened the window may or may not let this autoplay;
+    // if the browser says no, it waits on the play button
+    play({id: startId}, Math.max(0, parseInt(qs.get("t"), 10) || 0), true);
+  }
+  const report = () => {
+    if (!cur) return;
+    store.set("msRepeatMini", {id: cur.id, title: cur.title, channel: cur.channel,
+      t: ready ? Math.floor(player.getCurrentTime() || 0) : 0, s: session[cur.id] || 0});
+  };
+  setInterval(report, 1000);
+  addEventListener("pagehide", report);
+} else {
+  setCompact(!APP && store.get("msRepeatCompact", false));
+  if (startId && /^[A-Za-z0-9_-]{11}$/.test(startId)) {
+    const v = srvRow(startId) || {};
+    play({id: startId, title: v.title, channel: v.channel}, 0, false);
+  } else {
+    // no video in the address: open on the last one played, ready to go
+    // (cued, not autoplayed - browsers block sound until a click)
+    countsReady.then(async () => {
+      await loadLists();
+      if (listOn()) { playIdx(q.idx, APP); return; }    // resume the playlist where it was
+      const last = server.videos[0] || store.get("msRepeatLast", null);
+      // the desktop app allows sound without a click, so there it just starts
+      if (last && last.id && !cur) play({id: last.id, title: last.title, channel: last.channel}, 0, APP);
+    });
+  }
+}
+</script>
+</body>
+</html>
