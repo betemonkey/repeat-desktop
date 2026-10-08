@@ -1,8 +1,12 @@
-# On repeat — desktop
+# On repeat (yt-on-repeat)
+
+Loops YouTube videos and keeps a lifetime listen count: a Windows app, a phone
+web version and an Android app (see [Phone](#phone)). The repo was called
+`repeat-desktop` until 2026-10-08.
 
 A standalone Windows app that loops YouTube videos and keeps a lifetime listen
 count. **Needs no server**: the page, the counts and the search all live in the
-app on this PC. **[Download the latest release](https://github.com/betemonkey/repeat-desktop/releases/latest)**.
+app on this PC. **[Download the latest release](https://github.com/betemonkey/yt-on-repeat/releases/latest)**.
 
 ![The full window: a video on a loop, its lifetime count, the all-videos total, loop modes and Recent](docs/screenshots/full.png)
 
@@ -70,7 +74,7 @@ play/pause spanning the song name and description.
 
 ## Install
 
-Download the zip from the [latest release](https://github.com/betemonkey/repeat-desktop/releases/latest),
+Download the zip from the [latest release](https://github.com/betemonkey/yt-on-repeat/releases/latest),
 unzip it anywhere and run `OnRepeat\RepeatDesktop.exe`. .NET is built in; Microsoft
 WebView2 comes with Windows 11. The .exe isn't signed, so the first run shows
 "Windows protected your PC": choose **More info → Run anyway**.
@@ -89,7 +93,10 @@ Needs the .NET 9 runtime and Microsoft's WebView2 runtime (ships with Windows 11
 - **Web:** `mobile/` is the same page with no server: `mobile/local-api.js`
   answers its routes from the browser's storage, with the desktop app's rules.
   Counts, playlists and the search key stay on that phone; nothing syncs with
-  the PC. Published at <https://betemonkey.github.io/repeat-desktop/> from the
+  the PC. The old address (`/repeat-desktop/`) stopped working with the
+  rename; a home-screen shortcut to it needs adding again (counts and
+  playlists stay, the browser keeps them for all of betemonkey.github.io).
+  Published at <https://betemonkey.github.io/yt-on-repeat/> from the
   `gh-pages` branch, which holds only the contents of `mobile/`. To publish a
   change: `git subtree split --prefix mobile -b site && git push origin site:gh-pages && git branch -D site`.
 - **Android app** (`android/`): the `mobile/` page in a WebView, plus
@@ -97,7 +104,7 @@ Needs the .NET 9 runtime and Microsoft's WebView2 runtime (ships with Windows 11
   and the screen kept on while playing. Locking the phone pauses the video
   (playing on with the screen off is YouTube Premium's); it carries on when
   the app comes back. Its counts are its own, separate from the browser's.
-  The APK is on the [releases page](https://github.com/betemonkey/repeat-desktop/releases)
+  The APK is on the [releases page](https://github.com/betemonkey/yt-on-repeat/releases)
   (`android-v…`, marked pre-release so the desktop download stays "latest").
 
 - **iPhone: web version only.** Open the web version in Safari and use
