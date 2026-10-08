@@ -84,6 +84,27 @@ bin\Release\net9.0-windows\RepeatDesktop.exe
 
 Needs the .NET 9 runtime and Microsoft's WebView2 runtime (ships with Windows 11).
 
+## Phone
+
+- **Web:** `mobile/` is the same page with no server: `mobile/local-api.js`
+  answers its routes from the browser's storage, with the desktop app's rules.
+  Counts, playlists and the search key stay on that phone; nothing syncs with
+  the PC. Published on GitHub Pages from the `gh-pages` branch.
+- **Android app** (`android/`): the `mobile/` page in a WebView, plus
+  **Share → On repeat** from YouTube, picture-in-picture while a video plays,
+  and the screen kept on while playing. Locking the phone pauses the video
+  (playing on with the screen off is YouTube Premium's); it carries on when
+  the app comes back. Its counts are its own, separate from the browser's.
+
+```
+cd android
+gradlew assembleDebug        # needs JDK 17 and the Android SDK (local.properties: sdk.dir)
+```
+
+The APK lands in `android/app/build/outputs/apk/debug/app-debug.apk`. It's a
+debug build, signed with this PC's debug key: updates install over it only
+from the same PC.
+
 ## Where things are kept (this PC only)
 
 | What | Where |
