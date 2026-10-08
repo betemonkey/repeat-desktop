@@ -11,7 +11,10 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.Rational
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.view.WindowManager
+import android.widget.FrameLayout
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -38,6 +41,7 @@ class MainActivity : Activity() {
     private var pageReady = false
     private var playing = false
     private var resumeOnStart = false
+    private lateinit var root: FrameLayout
 
     private val assets by lazy {
         WebViewAssetLoader.Builder()
@@ -50,7 +54,19 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         web = WebView(this)
-        setContentView(web)
+        // Android 15 draws every app edge to edge: without this the page runs
+        // under the clock and the gesture bar. The strip behind the bars takes
+        // the page's background (see onTheme).
+        root = FrameLayout(this).apply { addView(web) }
+        root.setOnApplyWindowInsetsListener { v, insets ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val bars = insets.getInsets(WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout())
+                v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            }
+            insets
+        }
+        setContentView(root)
+        onTheme(dark = true)
         web.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true                  // counts, playlists, the search key
@@ -63,7 +79,11 @@ class MainActivity : Activity() {
         // (not YouTube's frame), the same rule the desktop window keeps
         if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
             WebViewCompat.addWebMessageListener(web, "OnRepeatAndroid", setOf(ORIGIN)) { _, message, _, isMainFrame, _ ->
-                if (isMainFrame) onPlaying(message.data == "playing")
+                if (!isMainFrame) return@addWebMessageListener
+                when (val m = message.data) {
+                    "theme:dark", "theme:light" -> onTheme(m == "theme:dark")
+                    else -> onPlaying(m == "playing")
+                }
             }
         }
         web.webViewClient = object : WebViewClient() {
@@ -116,6 +136,17 @@ class MainActivity : Activity() {
         }
     }
 
+    // ---------- the page's theme: bars and their icons ----------
+
+    private fun onTheme(dark: Boolean) {
+        root.setBackgroundColor(if (dark) DARK_BG else LIGHT_BG)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val light = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or
+                WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+            window.insetsController?.setSystemBarsAppearance(if (dark) 0 else light, light)
+        }
+    }
+
     // ---------- playing: screen on, picture-in-picture ----------
 
     private fun onPlaying(now: Boolean) {
@@ -140,7 +171,7 @@ class MainActivity : Activity() {
 
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
-        web.evaluateJavascript("document.body.classList.toggle('pip', $isInPictureInPictureMode)", null)
+        web.evaluateJavascript("setPip($isInPictureInPictureMode)", null)
     }
 
     // ---------- screen locked or window closed: pause, then carry on ----------
@@ -168,6 +199,8 @@ class MainActivity : Activity() {
 
     companion object {
         private const val TAG = "OnRepeat"
+        private const val DARK_BG = 0xFF1E1D1B.toInt()     // the page's --bg, dark and light
+        private const val LIGHT_BG = 0xFFF7F6F3.toInt()
         private const val HOST = "appassets.androidplatform.net"
         private const val ORIGIN = "https://$HOST"
         private val LINK = Regex("https?://\\S+")
