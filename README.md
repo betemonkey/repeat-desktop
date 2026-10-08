@@ -133,6 +133,14 @@ DevTools port (counting rules, refused inputs, 8 parallel tabs × 25 loops, sear
 without a key, a wrong key refused by Google, the key guide, oEmbed titles, a
 damaged counts file), and closes it. Needs internet for the YouTube parts.
 
+## Design history
+
+`mockups/from-dashboard/` holds the first designs, from when this was a page on
+the monkey-status dashboard (open `youtube-repeat.html`; it shows layouts A–E,
+the compact card and the desktop-app plan). Layout D won. NAS addresses and paths
+in them are blanked out. `mockups/*.html` hold the later picks: scroll bar, orange
+text, music bars, header and playlists.
+
 ## Security
 
 Reviewed 2026-10-08; the checks cover each point.

@@ -1,0 +1,126 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repeat Minimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<style>
+  /* /repeat, layout D "Minimal", 2026-10-07. taste-minimal used as reference only:
+     warm monochrome, flat bento, 1px borders, no shadows, no gradients, crisp radii.
+     Adapted for a utility page: kept the palette, type contrast and bento grid; dropped
+     the landing-page parts (macro whitespace, scroll-in animations, ambient blobs,
+     hero imagery). Static mockup - nothing plays. */
+  :root{color-scheme:light;--bg:#F7F6F3;--card:#FFFFFF;--line:#EAEAEA;--ink:#2F3437;--ink2:#555a5d;--mut:#787774;--btn:#111111;--btnink:#FFFFFF;--y:#FBF3DB;--yt:#956400;--g:#EDF3EC;--gt:#346538;--r:#FDEBEC;--rt:#9F2F2D;--well:#EFEDE8}
+  :root[data-theme="dark"]{color-scheme:dark;--bg:#1E1D1B;--card:#262523;--line:#353331;--ink:#ECEAE5;--ink2:#C4C1BA;--mut:#8E8B85;--btn:#ECEAE5;--btnink:#1E1D1B;--y:#3A3220;--yt:#E6C474;--g:#253226;--gt:#9CC79F;--r:#3A2526;--rt:#E79C9A;--well:#2E2C29}
+  *{box-sizing:border-box}
+  body{margin:0;padding:24px 16px 56px;background:var(--bg);color:var(--ink);font:14px/1.6 "Helvetica Neue",-apple-system,"Segoe UI",sans-serif}
+  .mono{font-family:"Geist Mono","SF Mono",ui-monospace,Consolas,monospace}
+  .wrap{max-width:1040px;margin:0 auto}
+  .mockbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:28px;font-size:12px;color:var(--mut)}
+  .mockbar button{font:12px "Geist Mono",ui-monospace,monospace;border:1px solid var(--line);background:var(--card);color:var(--ink2);border-radius:6px;padding:4px 10px;cursor:pointer}
+  header{display:flex;align-items:baseline;gap:14px;margin-bottom:20px}
+  header a{color:var(--mut);text-decoration:none;font-size:13px;display:inline-flex;align-items:center;gap:4px}
+  h1{font:500 34px/1.1 Newsreader,"Instrument Serif",Georgia,serif;letter-spacing:-.03em;margin:0}
+  header .sp{flex:1}
+  kbd{font:11px "Geist Mono",ui-monospace,monospace;border:1px solid var(--line);border-radius:4px;background:var(--bg);padding:1px 5px;color:var(--ink2)}
+  .search{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:10px 12px;margin-bottom:16px;color:var(--mut)}
+  .search .tx{flex:1}
+  .btn{font:500 13px "Helvetica Neue",-apple-system,sans-serif;background:var(--btn);color:var(--btnink);border:0;border-radius:5px;padding:6px 14px;display:inline-flex;align-items:center;gap:6px}
+  .btn.q{background:none;color:var(--ink);border:1px solid var(--line)}
+  .bento{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+  .cell{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .player{grid-column:span 4;grid-row:span 2;padding:0;overflow:hidden;display:flex;flex-direction:column}
+  .vid{aspect-ratio:16/9;background:var(--well);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:var(--mut);font-size:12px}
+  .vid i{font-size:40px}
+  .meta{padding:16px 20px;display:flex;align-items:center;gap:14px;border-top:1px solid var(--line)}
+  .meta .t{flex:1;min-width:0}
+  .meta b{display:block;font:500 20px/1.2 Newsreader,Georgia,serif;letter-spacing:-.02em}
+  .meta small{color:var(--mut);font-size:12.5px}
+  .k{font:11px "Geist Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+  .num{font:500 56px/1 Newsreader,Georgia,serif;letter-spacing:-.04em;margin:10px 0 6px}
+  .num.s{font-size:36px}
+  .sub{font-size:12.5px;color:var(--mut)}
+  .tag{display:inline-block;font:10.5px "Geist Mono",ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;border-radius:9999px;padding:2px 8px}
+  .tag.y{background:var(--y);color:var(--yt)}.tag.g{background:var(--g);color:var(--gt)}.tag.r{background:var(--r);color:var(--rt)}
+  .c-life{grid-column:span 2}
+  .c-all{grid-column:span 2}
+  .c-loop{grid-column:span 3}
+  .c-recent{grid-column:span 3}
+  .seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-top:12px}
+  .seg span{flex:1;text-align:center;padding:6px 0;font-size:12.5px;color:var(--ink2)}
+  .seg span+span{border-left:1px solid var(--line)}
+  .seg .on{background:var(--btn);color:var(--btnink)}
+  .ab{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .ab div{border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+  .ab b{display:block;font:500 15px "Geist Mono",ui-monospace,monospace}
+  .list{margin:6px 0 0;padding:0;list-style:none}
+  .list li{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+  .list li:last-child{border-bottom:0}
+  .th{aspect-ratio:16/9;border-radius:4px;background:var(--well);border:1px solid var(--line)}
+  .list b{font-weight:500;font-size:13.5px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .list small{color:var(--mut);font-size:12px}
+  .list .n{font:13px "Geist Mono",ui-monospace,monospace;color:var(--ink2);text-align:right}
+  .note{margin-top:28px;border-top:1px solid var(--line);padding-top:16px;color:var(--ink2);font-size:13px}
+  .note p{margin:0 0 6px}
+  @media (max-width:780px){
+    .bento{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .player,.c-loop,.c-recent{grid-column:span 2}
+    .c-life,.c-all{grid-column:span 1}
+    .num{font-size:40px}
+    h1{font-size:28px}
+    header .hide{display:none}
+  }
+</style>
+<div class="wrap">
+  <div class="mockbar"><span class="mono">MOCKUP D · MINIMAL</span><button id="th">theme: light</button><span>The dark toggle is the same warm monochrome, darkened, so it can sit beside the dark dashboard.</span></div>
+
+  <header><a href="#"><i class="ph-bold ph-arrow-left"></i>Dashboard</a><span class="sp"></span><span class="hide sub">Search <kbd>/</kbd> · Play <kbd>K</kbd> · A–B <kbd>L</kbd></span></header>
+  <h1 style="margin-bottom:18px">On repeat</h1>
+
+  <div class="search"><i class="ph-bold ph-magnifying-glass"></i><span class="tx">Paste a YouTube link, or search</span><button class="btn">Play</button></div>
+
+  <div class="bento">
+    <div class="cell player">
+      <div class="vid"><i class="ph-bold ph-youtube-logo"></i>YouTube embed, nothing drawn over it</div>
+      <div class="meta"><div class="t"><b>Song title from the video</b><small>Channel name · since 21:04</small></div><span class="tag g">looping</span><button class="btn q"><i class="ph-bold ph-pause"></i></button></div>
+    </div>
+
+    <div class="cell c-life">
+      <div class="k">This video</div>
+      <div class="num">1,284</div>
+      <div class="sub">loops since 12 Aug</div>
+      <div style="margin-top:10px"><span class="tag y">14 this session</span></div>
+    </div>
+    <div class="cell c-all">
+      <div class="k">All videos</div>
+      <div class="num s">9,731</div>
+      <div class="sub">loops across 37 videos</div>
+    </div>
+
+    <div class="cell c-loop">
+      <div class="k">Loop</div>
+      <div class="seg"><span class="on">Whole video</span><span>Part (A–B)</span></div>
+      <div class="ab"><div><span class="k">A</span><b>1:04</b><span class="sub">set to now</span></div><div><span class="k">B</span><b>2:52</b><span class="sub">set to now</span></div></div>
+      <div class="sub" style="margin-top:8px">"Set to now" takes the playing time; or click a time to type one.</div>
+    </div>
+    <div class="cell c-recent">
+      <div class="k">Recent</div>
+      <ul class="list">
+        <li><div class="th"></div><div><b>Another track</b><small>yesterday</small></div><span class="n">3,410</span></li>
+        <li><div class="th"></div><div><b>Opening theme</b><small>1 Oct</small></div><span class="n">612</span></li>
+        <li><div class="th"></div><div><b>Rain sounds 1 hour</b><small>3 Oct</small></div><span class="n">27</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note">
+    <p><b>What changed from taste-minimal, and why:</b> its icon rule (Phosphor Bold), fonts (Newsreader for the title and the counts, Geist Mono for labels), palette, 1px #EAEAEA borders and 12px radii are kept. Its landing-page rules are dropped: no 96px section gaps, no fade-in on scroll, no background blobs or photography, because this page is one screen you leave open.</p>
+    <p>The loop status is a pale tag beside the title, not a chip on the video. YouTube's embed rules forbid drawing anything over the player, which the first mockup (A/B/C) did. That gets fixed in whichever layout is picked.</p>
+  </div>
+</div>
+<script>
+  const b = document.getElementById("th");
+  b.onclick = () => { const d = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = d; b.textContent = "theme: " + d; };
+</script>

@@ -1,0 +1,128 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repeat Desktop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  /* Desktop app mockup, 2026-10-07. Monkey: "lets build our own windows app" after
+     Firefox's address bar and the browser pop-out hand-over. The app is a small
+     .NET window (WebView2) showing /repeat - its own frameless, always-on-top
+     window, no browser bar. Layout D's dark palette. Static: nothing plays.
+     The window strip, fold and size buttons are the new parts; the card is D's. */
+  :root{color-scheme:dark;--bg:#1E1D1B;--card:#262523;--line:#353331;--ink:#ECEAE5;--ink2:#C4C1BA;--mut:#8E8B85;--y:#3A3220;--yt:#E6C474;--g:#253226;--gt:#9CC79F;--well:#2E2C29}
+  *{box-sizing:border-box}
+  body{margin:0;padding:24px 16px 56px;background:#151413;color:var(--ink);font:14px/1.55 "Helvetica Neue",-apple-system,"Segoe UI",sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+  h1{font:500 30px/1.1 Newsreader,Georgia,serif;letter-spacing:-.03em;margin:0}
+  .lead{color:var(--ink2);margin:0;max-width:820px}
+  .k{font:11px "Geist Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+  /* fake desktop */
+  .desk{position:relative;min-height:600px;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    background:linear-gradient(160deg,#23303b,#1a1f26 60%,#141619)}
+  .app{position:absolute;background:#e9e7e3;border-radius:6px;opacity:.10}
+  .a1{left:3%;top:5%;width:58%;height:70%}.a2{left:24%;top:30%;width:50%;height:58%}
+  .bar{position:absolute;left:0;right:0;bottom:0;height:40px;background:rgba(0,0,0,.45)}
+  .states{position:absolute;inset:0;display:flex;gap:26px;justify-content:flex-end;align-items:flex-start;padding:26px 26px 60px;flex-wrap:wrap}
+  .col{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+  .col .k{color:#b9c2cc}
+  /* the app window: no OS title bar, no browser bar - the strip IS the drag area */
+  .win{width:320px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+  .strip{display:flex;align-items:center;gap:2px;height:30px;padding:0 4px 0 10px;cursor:grab;user-select:none;border-bottom:1px solid var(--line)}
+  .strip .nm{font:11px "Geist Mono",ui-monospace,monospace;letter-spacing:.1em;color:var(--mut);flex:1;display:flex;align-items:center;gap:6px}
+  .strip .nm i{width:7px;height:7px;border-radius:50%;background:var(--gt)}
+  .ib{width:26px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--ink2);font-size:13px}
+  .ib.on{background:var(--well);color:var(--ink)}
+  .ib svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .vid{height:200px;background:#0f0e0d;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:#77736d;font-size:11px;text-align:center}
+  .vid b{font:600 28px/1 "Helvetica Neue",sans-serif;color:#d24;letter-spacing:-.02em}
+  .meta{display:flex;align-items:center;gap:10px;padding:9px 12px}
+  .meta .t{flex:1;min-width:0}
+  .meta b{display:block;font:500 15px/1.25 Newsreader,Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta small{display:block;color:var(--mut);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pp{width:34px;height:30px;border-radius:5px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink)}
+  .pp svg{width:14px;height:14px;fill:currentColor}
+  .prog{height:3px;background:var(--well);margin:0 12px}
+  .prog i{display:block;height:3px;width:38%;background:var(--yt)}
+  .cc{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);margin-top:8px}
+  .cc div{padding:7px 12px;display:flex;flex-direction:column}
+  .cc div+div{border-left:1px solid var(--line)}
+  .cc b{font:500 21px/1.15 Newsreader,Georgia,serif}
+  .cc b.y{color:var(--yt)}
+  .tag{font:10px "Geist Mono",ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:1px 7px;background:var(--g);color:var(--gt)}
+  /* notes */
+  .notes{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+  .notes h2{font:500 20px/1.2 Newsreader,Georgia,serif;margin:0}
+  .notes h3{font-size:14px;margin:0 0 4px}
+  .notes p,.notes li{color:var(--ink2);font-size:13px;margin:0}
+  .notes ul{margin:4px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+  .q{border-left:3px solid var(--yt);padding-left:12px}
+  code{font:12px "Geist Mono",ui-monospace,monospace;background:var(--well);padding:0 4px;border-radius:4px}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;color:var(--ink2);font-size:12.5px}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .legend .ib{border:1px solid var(--line)}
+</style>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="fold" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+  <symbol id="unfold" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="full" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></symbol>
+  <symbol id="pin" viewBox="0 0 24 24"><path d="M12 17v5M5 17h14l-2-4V5H7v8z"/></symbol>
+  <symbol id="x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="pause" viewBox="0 0 24 24"><path d="M7 4h3v16H7zM14 4h3v16h-3z"/></symbol>
+</svg>
+
+<div class="wrap">
+  <div><span class="k">Mockup · On repeat desktop app</span><h1>Its own window: no browser bar, folds to a strip</h1></div>
+  <p class="lead">A small Windows app that shows <code>/repeat</code> in its own window: frameless, always on top, dragged by its top strip. It's one window with one player that changes size, so there's never a second player to hand the progress or counts over to. That fixes the hand-over problem you found by removing it.</p>
+
+  <div class="legend">
+    <span><span class="ib"><svg><use href="#fold"/></svg></span>fold: hide the video</span>
+    <span><span class="ib"><svg><use href="#full"/></svg></span>full page ↔ mini</span>
+    <span><span class="ib on"><svg><use href="#pin"/></svg></span>always on top (on by default)</span>
+    <span><span class="ib"><svg><use href="#x"/></svg></span>close (music stops)</span>
+  </div>
+
+  <div class="desk">
+    <div class="app a1"></div><div class="app a2"></div><div class="bar"></div>
+    <div class="states">
+      <div class="col"><span class="k">Mini · unfolded</span>
+        <div class="win">
+          <div class="strip"><span class="nm"><i></i>ON REPEAT</span>
+            <span class="ib"><svg><use href="#fold"/></svg></span><span class="ib"><svg><use href="#full"/></svg></span><span class="ib on"><svg><use href="#pin"/></svg></span><span class="ib"><svg><use href="#x"/></svg></span></div>
+          <div class="vid"><b>▶</b>live YouTube player · 320 × 200</div>
+          <div class="meta"><div class="t"><b>LGTM (Looks Good to Me) - Claude Opus 5.5 music video</b><small>Degenerative Pixels · 14 this session</small></div><span class="pp"><svg><use href="#pause"/></svg></span></div>
+          <div class="prog"><i></i></div>
+          <div class="cc"><div><span class="k">This video</span><b class="y">1,284</b></div><div><span class="k">All videos</span><b>9,731</b></div></div>
+        </div>
+      </div>
+      <div class="col"><span class="k">Mini · folded (video hidden, still playing)</span>
+        <div class="win">
+          <div class="strip"><span class="nm"><i></i>ON REPEAT</span>
+            <span class="ib on"><svg><use href="#unfold"/></svg></span><span class="ib"><svg><use href="#full"/></svg></span><span class="ib on"><svg><use href="#pin"/></svg></span><span class="ib"><svg><use href="#x"/></svg></span></div>
+          <div class="meta"><div class="t"><b>LGTM (Looks Good to Me) - Claude Opus 5.5 music video</b><small>Degenerative Pixels · 14 this session · 1:52 / 5:05</small></div><span class="tag">looping</span><span class="pp"><svg><use href="#pause"/></svg></span></div>
+          <div class="prog"><i></i></div>
+          <div class="cc"><div><span class="k">This video</span><b class="y">1,284</b></div><div><span class="k">All videos</span><b>9,731</b></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h2>How it would work</h2>
+    <ul>
+      <li><b>App:</b> a small C# program (.NET 9, already on this PC) with Microsoft's WebView2, the Edge engine Windows 11 ships with (version 154 here). It needs one NuGet package, <code>Microsoft.Web.WebView2</code>. It builds to one <code>.exe</code>.</li>
+      <li><b>Page:</b> it loads <code>/repeat?app=1</code>. In app mode the page hides its header and search, and asks the app to resize the window when you switch between full and mini or fold and unfold. Full mode is the normal layout D page, search and all. The browser version of <code>/repeat</code> stays as it is.</li>
+      <li><b>Progress and counts:</b> one player, so nothing is handed over. The thin gold line is the video's progress, shown even when folded.</li>
+      <li><b>Autoplay:</b> WebView2 accepts Chromium start-up flags, so the app should be able to allow sound without a first click and start on your last video right away (to be confirmed when built).</li>
+      <li><b>Remembers:</b> window position, size, mini/full and folded state, per PC.</li>
+      <li><b>Fold:</b> hides the video and keeps title, play/pause, progress and counters. That's your call against YouTube's 200 px rule. I'll check the music keeps playing while it's hidden before calling it done.</li>
+    </ul>
+    <div class="q">
+      <h3>For Monkey</h3>
+      <ul>
+        <li><b>New repo name:</b> <code>betemonkey/repeat-desktop</code>, private? I'll create it only after your yes.</li>
+        <li><b>Which address the app opens:</b> the tailnet one (<code>http://&lt;nas-ip&gt;:&lt;port&gt;/repeat</code>, site code only, works whenever Tailscale is on) or the public one (Pocket ID passkey login inside the app, then the site code)? My pick is tailnet. I haven't checked that passkey login works inside the app.</li>
+        <li><b>Close button:</b> close the app (music stops), or hide it to the system tray and keep playing?</li>
+      </ul>
+    </div>
+  </div>
+</div>
