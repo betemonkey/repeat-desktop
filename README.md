@@ -89,12 +89,24 @@ Needs the .NET 9 runtime and Microsoft's WebView2 runtime (ships with Windows 11
 - **Web:** `mobile/` is the same page with no server: `mobile/local-api.js`
   answers its routes from the browser's storage, with the desktop app's rules.
   Counts, playlists and the search key stay on that phone; nothing syncs with
-  the PC. Published on GitHub Pages from the `gh-pages` branch.
+  the PC. Published at <https://betemonkey.github.io/repeat-desktop/> from the
+  `gh-pages` branch, which holds only the contents of `mobile/`. To publish a
+  change: `git subtree split --prefix mobile -b site && git push origin site:gh-pages && git branch -D site`.
 - **Android app** (`android/`): the `mobile/` page in a WebView, plus
   **Share → On repeat** from YouTube, picture-in-picture while a video plays,
   and the screen kept on while playing. Locking the phone pauses the video
   (playing on with the screen off is YouTube Premium's); it carries on when
   the app comes back. Its counts are its own, separate from the browser's.
+  The APK is on the [releases page](https://github.com/betemonkey/repeat-desktop/releases)
+  (`android-v…`, marked pre-release so the desktop download stays "latest").
+
+- **iPhone: web version only.** Open the web version in Safari and use
+  Share → Add to Home Screen. There is no iPhone app: it would need a Mac with
+  Xcode and a paid Apple developer account, and iPhones don't install
+  downloaded apps the way Android does. On an iPhone the web version can't
+  receive shares from YouTube (paste the link instead), can't shrink to
+  picture-in-picture and can't keep the screen on, so the video stops when you
+  leave it or the screen sleeps.
 
 ```
 cd android
