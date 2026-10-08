@@ -248,7 +248,9 @@ body.app .hide-app{display:none!important}
     <span class="sp"></span>
     <button class="btn q sm" id="rp-keybtn" title="YouTube search key"><svg class="i"><use href="#i-key"/></svg>Search key</button>
     <button class="btn q sm" id="rp-theme" title="Light / dark"><svg class="i"><use href="#i-moon"/></svg></button>
-    <button class="btn q sm" id="rp-compact" title="Small always-on-top window"><svg class="i"><use href="#i-min"/></svg>Pop out</button>
+    <!-- phone page: no compact or pop-out mode (Monkey, 2026-10-08); a phone
+         has picture-in-picture for that -->
+    <button class="btn q sm" id="rp-compact" title="Small always-on-top window" hidden><svg class="i"><use href="#i-min"/></svg>Pop out</button>
   </header>
 
   <form class="search" id="rp-form" autocomplete="off">
@@ -1230,7 +1232,7 @@ if (MINI) {
   setInterval(report, 1000);
   addEventListener("pagehide", report);
 } else {
-  setCompact(!APP && store.get("msRepeatCompact", false));
+  setCompact(false);                    // the phone page has no compact mode
   if (qs.get("share")) {
     openShared(qs.get("share"));
   } else if (startId && /^[A-Za-z0-9_-]{11}$/.test(startId)) {
