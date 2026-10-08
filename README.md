@@ -19,8 +19,8 @@ music bars (they follow the actual sound) and your counts.*
 
 *Screenshots use the Blender Foundation's open movies.*
 
-It started as a `/repeat` page on the monkey-status NAS dashboard (designs in the
-monkeynas repo, `ui-mockups/youtube-repeat*.html`). It became an app because a
+It started as a `/repeat` page on the monkey-status NAS dashboard (those first designs are
+in `mockups/from-dashboard/`). It became an app because a
 browser couldn't do what Monkey wanted from the pop-out: Firefox draws its
 address bar on page pop-outs, Orca's built-in browser closes them instantly, and
 two players in two windows had to hand progress and counts back and forth. Then
