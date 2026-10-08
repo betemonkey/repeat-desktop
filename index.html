@@ -60,6 +60,9 @@ form.search input{flex:1;min-width:0;border:0;background:none;color:var(--ink);f
 .grip,.ccount{display:none}
 .vid{aspect-ratio:16/9;min-height:200px;background:var(--well);position:relative}
 .vid iframe,.vid #player{position:absolute;inset:0;width:100%;height:100%;border:0}
+/* before the first video YouTube's frame shows its own empty player (a big red
+   button) behind "Paste a link…": keep the frame hidden until a video loads */
+.vid:has(#rp-empty:not([hidden])) iframe{visibility:hidden}
 .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:13px;padding:20px;text-align:center}
 .meta{padding:14px 20px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--line)}
 .meta .t{flex:1;min-width:0}
@@ -355,10 +358,14 @@ const day = iso => iso ? new Date(iso).toLocaleDateString("en-GB", {day: "numeri
 
 /* ---- theme ---- */
 const mq = matchMedia("(prefers-color-scheme: dark)");
+/* the Android app colours the status and navigation bars to match */
+const tellTheme = t => { if (window.OnRepeatAndroid) OnRepeatAndroid.postMessage("theme:" + t); };
 document.documentElement.dataset.theme = store.get("msRepeatTheme", mq.matches ? "dark" : "light");
+tellTheme(document.documentElement.dataset.theme);
 $("rp-theme").onclick = () => {
   const t = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
   document.documentElement.dataset.theme = t; store.set("msRepeatTheme", t);
+  tellTheme(t);
 };
 
 /* ---- links: youtu.be, watch?v=, shorts, embed, live, music; keeps t= ---- */
@@ -1181,6 +1188,20 @@ function openShared(text) {
   if (!link) { showMsg("That share has no YouTube link in it.", true); return false; }
   play({id: link.id}, link.t, true);
   return true;
+}
+
+/* ---- Android picture-in-picture: the app calls setPip. The small window is
+   narrower than the page, so WebView zoomed out to fit it, and back in full
+   screen it stayed zoomed in (1.05, emulator 2026-10-08). The zoom is held at
+   1 while the window is small and for a moment after. ---- */
+const viewport = document.querySelector("meta[name=viewport]");
+const VIEWPORT = viewport.content;
+let pipTimer = null;
+function setPip(on) {
+  document.body.classList.toggle("pip", on);
+  clearTimeout(pipTimer);
+  viewport.content = VIEWPORT + ", minimum-scale=1, maximum-scale=1";
+  if (!on) pipTimer = setTimeout(() => { viewport.content = VIEWPORT; }, 1000);
 }
 
 /* ---- start: counts, then the video in the address bar (cued, not autoplayed) ---- */
