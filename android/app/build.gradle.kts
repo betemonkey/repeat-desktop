@@ -11,8 +11,8 @@ android {
         applicationId = "com.betemonkey.onrepeat"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.2"
     }
 
     // the phone page itself: the same files GitHub Pages serves, bundled as is
